@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'RAPL_Register_Cron_Schedule' ) ) {
 	class RAPL_Register_Cron_Schedule extends RAPL_Register_Base_Cron_Schedule {
 		public function get_items(): Generator {
-			yield new RAPL_Reg_Cron_Schedule( 'every-10-min', 5 * MINUTE_IN_SECONDS, '매10분' );
+			yield new RAPL_Reg_Cron_Schedule( 'every-10-min', 10 * MINUTE_IN_SECONDS, '매10분' );
 		}
 	}
 }
