@@ -45,7 +45,7 @@ if ( ! class_exists( 'RAPL_Register_Custom_Table' ) ) {
 				[
 					"PRIMARY KEY  (id)",
 					"UNIQUE KEY unique_name (name)",
-					"FULLTEXT idx_name (name)",
+					"FULLTEXT INDEX idx_name (name)",
 				]
 			);
 
@@ -61,7 +61,7 @@ if ( ! class_exists( 'RAPL_Register_Custom_Table' ) ) {
 				[
 					"PRIMARY KEY  (id)",
 					"KEY idx_artist_id (artist_id)",
-					"FULLTEXT idx_title (title)",
+					"FULLTEXT INDEX idx_title (title)",
 				]
 			);
 
