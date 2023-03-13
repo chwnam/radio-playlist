@@ -11,10 +11,11 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 	/**
 	 * Class RAPL_Main
 	 *
-	 * @property-read RAPL_Admin     $admin
-	 * @property-read RAPL_Playlist  $playlist
-	 * @property-read RAPL_Registers $registers
-	 * @property-read RAPL_Runner    $runner
+	 * @property-read RAPL_Admin              $admin
+	 * @property-read RAPL_Playlist           $playlist
+	 * @property-read RAPL_Registers          $registers
+	 * @property-read RAPL_Runner             $runner
+	 * @property-read RAPL_Shortcode_Handlers $shortcode_handlers
 	 */
 	class RAPL_Main extends RAPL_Main_Base {
 		/**
@@ -25,10 +26,11 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 		 */
 		protected function get_early_modules(): array {
 			return [
-				'admin'     => RAPL_Admin::class,
-				'playlist'  => fn() => $this->new_instance( RAPL_Playlist::class ),
-				'registers' => RAPL_Registers::class,
-				'runner'    => RAPL_Runner::class,
+				'admin'              => RAPL_Admin::class,
+				'playlist'           => fn() => $this->new_instance( RAPL_Playlist::class ),
+				'registers'          => RAPL_Registers::class,
+				'runner'             => RAPL_Runner::class,
+				'shortcode_handlers' => fn() => $this->new_instance( RAPL_Shortcode_Handlers:: class ),
 			];
 		}
 

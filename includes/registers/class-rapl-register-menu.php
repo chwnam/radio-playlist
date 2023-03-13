@@ -20,6 +20,7 @@ if ( ! class_exists( 'RAPL_Register_Menu' ) ) {
 				'administrator',
 				'rapl-playlist',
 				'admin.playlist@output_menu_page',
+				'dashicons-format-audio'
 			);
 		}
 	}

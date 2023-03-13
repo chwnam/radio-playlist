@@ -120,5 +120,55 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		public function get_channel(): int {
 			return 192; // Thrash metal.
 		}
+
+		public function query( array $args = [] ): RAPL_Object_Track_Query {
+			global $wpdb;
+
+			$defaults = [
+				'page'     => 1,
+				'per_page' => 10,
+			];
+
+			$args     = wp_parse_args( $args, $defaults );
+			$page     = max( 1, $args['page'] );
+			$per_page = min( 100, max( 1, $args['per_page'] ) );
+
+			$fields = [
+				"t.id AS track_id",
+				"a.name AS artist",
+				"t.title",
+				"t.length",
+				"t.art_url",
+				"h.network_id",
+				"h.channel_id",
+				"h.started",
+			];
+
+			$offset = ( $page - 1 ) * $per_page;
+			$limit  = $wpdb->prepare( "LIMIT %d, %d", $offset, $per_page );
+
+			$f = implode( ', ', $fields );
+
+			$query = "SELECT SQL_CALC_FOUND_ROWS $f FROM {$wpdb->prefix}rapl_artists AS a" .
+			         " INNER JOIN {$wpdb->prefix}rapl_tracks AS t ON t.artist_id = a.id" .
+			         " INNER JOIN {$wpdb->prefix}rapl_history AS h ON h.track_id=t.id" .
+			         " ORDER BY h.started DESC $limit";
+
+			$wpdb->timer_start();
+			$rows       = $wpdb->get_results( $query );
+			$time       = $wpdb->timer_stop();
+			$found_rows = (int) $wpdb->get_var( "SELECT FOUND_ROWS()" );
+			$records    = array_map( [ RAPL_Object_Track::class, 'from_array' ], $rows );
+
+			$result              = new RAPL_Object_Track_Query();
+			$result->items       = $records;
+			$result->per_page    = $per_page;
+			$result->page        = $page;
+			$result->total       = $found_rows;
+			$result->total_pages = (int) ceil( (float) $found_rows / (float) $per_page );
+			$result->time_spent  = $time;
+
+			return $result;
+		}
 	}
 }

@@ -129,3 +129,20 @@ if ( ! function_exists( 'rapl_doing_submit' ) ) {
 		return apply_filters( 'rapl_doing_submit', is_admin() && str_ends_with( $_SERVER['SCRIPT_NAME'] ?? '', '/wp-admin/admin-post.php' ) );
 	}
 }
+
+
+if ( ! function_exists( 'rapl_format_runtime' ) ) {
+	function rapl_format_runtime( int $length ): string {
+		$minute = (int) ( $length / 60 );
+		$second = $length % 60;
+
+		return sprintf( '%02d:%02d', $minute, $second );
+	}
+}
+
+
+if ( ! function_exists( 'rapl_format_timestamp' ) ) {
+	function rapl_format_timestamp( int $timestamp ): string {
+		return wp_date( 'Y-m-d H:i:s', $timestamp );
+	}
+}
