@@ -14,7 +14,7 @@ if ( ! class_exists( 'RAPL_Runner' ) ) {
 
 		public function __construct() {
 			/** @uses rapl_playlist() */
-//			$this->add_action( 'rapl_playlist' );
+			$this->add_action( 'rapl_playlist' );
 		}
 
 		public function rapl_playlist() {
