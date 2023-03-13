@@ -64,7 +64,7 @@ if ( ! class_exists( 'RAPL_Registers' ) ) {
 					'cron_schedule' => RAPL_Register_Cron_Schedule::class,
 					'custom_table'  => RAPL_Register_Custom_Table::class,
 //					'deactivation'  => RAPL_Register_Deactivation::class,
-//					'menu'          => RAPL_Register_Menu::class,
+					'menu'          => RAPL_Register_Menu::class,
 //					'option'        => RAPL_Register_Option::class,
 //					'post_meta'     => RAPL_Register_Post_Meta::class,
 //					'post_type'     => RAPL_Register_Post_Type::class,

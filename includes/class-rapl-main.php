@@ -12,6 +12,7 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 	 * Class RAPL_Main
 	 *
 	 * @property-read RAPL_Admin     $admin
+	 * @property-read RAPL_Playlist  $playlist
 	 * @property-read RAPL_Registers $registers
 	 * @property-read RAPL_Runner    $runner
 	 */
@@ -24,7 +25,8 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 		 */
 		protected function get_early_modules(): array {
 			return [
-//				'admin'     => RAPL_Admin::class,
+				'admin'     => RAPL_Admin::class,
+				'playlist'  => fn() => $this->new_instance( RAPL_Playlist::class ),
 				'registers' => RAPL_Registers::class,
 				'runner'    => RAPL_Runner::class,
 			];

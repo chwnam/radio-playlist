@@ -31,6 +31,7 @@ class ComposerAutoloaderInit2418b52594ec78c47863bae34d4fe8b9
         require __DIR__ . '/autoload_static.php';
         \Composer\Autoload\ComposerStaticInit2418b52594ec78c47863bae34d4fe8b9::getInitializer($loader)();
 
+        $loader->setClassMapAuthoritative(true);
         $loader->register(true);
 
         $includeFiles = \Composer\Autoload\ComposerStaticInit2418b52594ec78c47863bae34d4fe8b9::$files;
