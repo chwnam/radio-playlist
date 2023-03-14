@@ -19,7 +19,8 @@
                 <th>Titile</th>
                 <th>Length</th>
                 <th>Started</th>
-                <th>YouTube</th>
+                <th>Video</th>
+                <th>Search</th>
             </tr>
             </thead>
             <tbody>
@@ -30,6 +31,19 @@
                     <td><?php echo esc_html( $item->title ); ?></td>
                     <td><?php echo esc_html( rapl_format_runtime( $item->length ) ); ?></td>
                     <td><?php echo esc_html( rapl_format_timestamp( $item->started ) ); ?></td>
+                    <td>
+		                <?php
+		                $url = add_query_arg(
+			                [
+				                'action'   => 'rapl_get_video',
+				                'nonce'    => wp_create_nonce( 'rapl_get_video_' . $item->track_id ),
+				                'track_id' => $item->track_id,
+			                ],
+			                admin_url( 'admin-post.php' )
+		                )
+		                ?>
+                        <a href="<?php echo esc_url( $url ); ?>" target="_blank">Video</a>
+                    </td>
                     <td>
 						<?php
 						$url = add_query_arg(
@@ -48,9 +62,9 @@
         </table>
         <p>
 			<?php
-            $page_link = remove_query_arg( 'pg' );
-			$prev = max( 1, $page - 1 );
-			$next = min( $result->total_pages, $page + 1 );
+			$page_link = remove_query_arg( 'pg' );
+			$prev      = max( 1, $page - 1 );
+			$next      = min( $result->total_pages, $page + 1 );
 			?>
             <a href="<?php echo esc_url( add_query_arg( 'pg', 1, $page_link ) ); ?>">&laquo;</a>
             <a href="<?php echo esc_url( add_query_arg( 'pg', $prev, $page_link ) ); ?>">&lsaquo;</a>

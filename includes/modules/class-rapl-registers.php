@@ -75,7 +75,7 @@ if ( ! class_exists( 'RAPL_Registers' ) ) {
 					'shortcode'     => RAPL_Register_Shortcode::class,
 //					'sidebar'       => RAPL_Register_Sidebar::class,
 //					'style'         => RAPL_Register_Style::class,
-//					'submit'        => RAPL_Register_Submit::class,
+					'submit'        => RAPL_Register_Submit::class,
 //					'taxonomy'      => RAPL_Register_Taxonomy::class,
 //					'term_meta'     => RAPL_Register_Term_Meta::class,
 					// 'theme_support' => RAPL_Register_Theme_Support::class, // Only for themes.

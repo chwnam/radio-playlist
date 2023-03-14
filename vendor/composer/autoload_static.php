@@ -124,6 +124,7 @@ class ComposerStaticInit2418b52594ec78c47863bae34d4fe8b9
         'RAPL_Submodule_Impl' => __DIR__ . '/../..' . '/core/traits/trait-rapl-submodule-impl.php',
         'RAPL_Template_Impl' => __DIR__ . '/../..' . '/core/traits/trait-rapl-template-impl.php',
         'RAPL_Theme_Hierarchy' => __DIR__ . '/../..' . '/core/etc/class-rapl-theme-hierarchy.php',
+        'RAPL_YouTube_Video' => __DIR__ . '/../..' . '/includes/modules/class-rapl-youtube-video.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

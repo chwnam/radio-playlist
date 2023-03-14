@@ -14,7 +14,8 @@ if ( ! class_exists( 'RAPL_Register_Submit' ) ) {
 		// protected bool $autobind = false;
 
 		public function get_items(): Generator {
-			yield; // yield new RAPL_Reg_Submit();
+			/** @uses RAPL_YouTube_Video::submit_get_video() */
+			yield new RAPL_Reg_Submit( 'rapl_get_video', 'youtube_video@submit_get_video' );
 		}
 	}
 }

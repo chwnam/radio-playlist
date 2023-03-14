@@ -117,4 +117,5 @@ return array(
     'RAPL_Submodule_Impl' => $baseDir . '/core/traits/trait-rapl-submodule-impl.php',
     'RAPL_Template_Impl' => $baseDir . '/core/traits/trait-rapl-template-impl.php',
     'RAPL_Theme_Hierarchy' => $baseDir . '/core/etc/class-rapl-theme-hierarchy.php',
+    'RAPL_YouTube_Video' => $baseDir . '/includes/modules/class-rapl-youtube-video.php',
 );
