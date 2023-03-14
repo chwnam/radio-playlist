@@ -1,6 +1,7 @@
 <?php
 /**
  * @var int                     $page
+ * @var string                  $search
  * @var RAPL_Object_Track_Query $result
  */
 ?>
@@ -10,6 +11,13 @@
             Page: <?php echo esc_html( $page ); ?><br/>
             Total: <?php echo esc_html( $result->total ); ?><br/>
             Query time: <?php echo esc_html( sprintf( '%.5f', $result->time_spent ) ); ?>s
+        </div>
+        <div>
+            <form action="" method="get">
+                <label for="search">Search</label>:
+                <input id="search" name="search" class="text" type="search" value="<?php echo esc_attr( $search ); ?>"/>
+                <button type="submit">Search</button>
+            </form>
         </div>
         <table>
             <thead>
@@ -32,16 +40,16 @@
                     <td><?php echo esc_html( rapl_format_runtime( $item->length ) ); ?></td>
                     <td><?php echo esc_html( rapl_format_timestamp( $item->started ) ); ?></td>
                     <td>
-		                <?php
-		                $url = add_query_arg(
-			                [
-				                'action'   => 'rapl_get_video',
-				                'nonce'    => wp_create_nonce( 'rapl_get_video_' . $item->track_id ),
-				                'track_id' => $item->track_id,
-			                ],
-			                admin_url( 'admin-post.php' )
-		                )
-		                ?>
+						<?php
+						$url = add_query_arg(
+							[
+								'action'   => 'rapl_get_video',
+								'nonce'    => wp_create_nonce( 'rapl_get_video_' . $item->track_id ),
+								'track_id' => $item->track_id,
+							],
+							admin_url( 'admin-post.php' )
+						)
+						?>
                         <a href="<?php echo esc_url( $url ); ?>" target="_blank">Video</a>
                     </td>
                     <td>

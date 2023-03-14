@@ -15,11 +15,13 @@ if ( ! class_exists( 'RAPL_Shortcode_Handlers' ) ) {
 		public function handlde_playlist(): string {
 			$module = rapl()->playlist;
 
+			$search = wp_unslash( $_GET['search'] ?? '' );
 			$page   = (int) ( $_GET['pg'] ?? '1' );
 			$result = $module->query(
 				[
 					'page'     => $page,
 					'per_page' => 20,
+					'search'   => $search,
 				]
 			);
 
@@ -28,6 +30,7 @@ if ( ! class_exists( 'RAPL_Shortcode_Handlers' ) ) {
 				[
 					'page'   => $page,
 					'result' => &$result,
+					'search' => $search,
 				],
 				'',
 				false

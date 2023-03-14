@@ -127,6 +127,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			$defaults = [
 				'page'     => 1,
 				'per_page' => 10,
+				'search'   => '',
 			];
 
 			$args     = wp_parse_args( $args, $defaults );
@@ -144,15 +145,24 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 				"h.started",
 			];
 
+			$f      = implode( ', ', $fields );
 			$offset = ( $page - 1 ) * $per_page;
 			$limit  = $wpdb->prepare( "LIMIT %d, %d", $offset, $per_page );
+			$where  = "WHERE 1=1";
 
-			$f = implode( ', ', $fields );
+			if ( $args['search'] ) {
+				$like  = esc_sql( '%' . $wpdb->esc_like( $args['search'] ) . '%' );
+				$where .= $wpdb->prepare(
+					" AND ((a.name LIKE %s) OR (t.title LIKE %s))",
+					$like,
+					$like
+				);
+			}
 
 			$query = "SELECT SQL_CALC_FOUND_ROWS $f FROM {$wpdb->prefix}rapl_artists AS a" .
 			         " INNER JOIN {$wpdb->prefix}rapl_tracks AS t ON t.artist_id = a.id" .
 			         " INNER JOIN {$wpdb->prefix}rapl_history AS h ON h.track_id=t.id" .
-			         " ORDER BY h.started DESC $limit";
+			         " $where ORDER BY h.started DESC $limit";
 
 			$wpdb->timer_start();
 			$rows       = $wpdb->get_results( $query );
