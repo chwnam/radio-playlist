@@ -15,7 +15,7 @@
         <div>
             <form action="" method="get">
                 <label for="search">Search</label>:
-                <input id="search" name="search" class="text" type="search" value="<?php echo esc_attr( $search ); ?>"/>
+                <input id="search" name="srch" class="text" type="search" value="<?php echo esc_attr( $search ); ?>"/>
                 <button type="submit">Search</button>
             </form>
         </div>
