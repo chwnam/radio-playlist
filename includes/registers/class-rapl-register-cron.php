@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'RAPL_Register_Cron' ) ) {
 	class RAPL_Register_Cron extends RAPL_Register_Base_Cron {
 		public function get_items(): Generator {
-			yield new RAPL_Reg_Cron( time(), 'every-5-min', 'rapl_playlist' );
+			yield new RAPL_Reg_Cron( time(), 'every-3-min', 'rapl_playlist' );
 		}
 	}
 }
