@@ -1,15 +1,24 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.6.1',
-        'version' => '1.6.1.0',
+        'pretty_version' => '0.1.0',
+        'version' => '0.1.0.0',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'reference' => NULL,
-        'name' => 'naran/boilerplate',
+        'name' => 'changwoo/radio-playlist',
         'dev' => true,
     ),
     'versions' => array(
+        'changwoo/radio-playlist' => array(
+            'pretty_version' => '0.1.0',
+            'version' => '0.1.0.0',
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => NULL,
+            'dev_requirement' => false,
+        ),
         'dealerdirect/phpcodesniffer-composer-installer' => array(
             'pretty_version' => 'v0.7.2',
             'version' => '0.7.2.0',
@@ -20,13 +29,22 @@
             'dev_requirement' => true,
         ),
         'doctrine/instantiator' => array(
-            'pretty_version' => '2.0.0',
-            'version' => '2.0.0.0',
+            'pretty_version' => '1.5.0',
+            'version' => '1.5.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../doctrine/instantiator',
             'aliases' => array(),
-            'reference' => 'c6222283fa3f4ac679f8b9ced9a4e23f163e80d0',
+            'reference' => '0a0fa9780f5d4e507415a065172d26a98d02047b',
             'dev_requirement' => true,
+        ),
+        'monolog/monolog' => array(
+            'pretty_version' => '2.9.1',
+            'version' => '2.9.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../monolog/monolog',
+            'aliases' => array(),
+            'reference' => 'f259e2b15fb95494c83f52d3caad003bbf5ffaa1',
+            'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(
             'pretty_version' => '1.11.1',
@@ -36,15 +54,6 @@
             'aliases' => array(),
             'reference' => '7284c22080590fb39f2ffa3e9057f10a4ddd0e0c',
             'dev_requirement' => true,
-        ),
-        'naran/boilerplate' => array(
-            'pretty_version' => '1.6.1',
-            'version' => '1.6.1.0',
-            'type' => 'wordpress-plugin',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'reference' => NULL,
-            'dev_requirement' => false,
         ),
         'nikic/php-parser' => array(
             'pretty_version' => 'v4.15.4',
@@ -153,6 +162,21 @@
             'aliases' => array(),
             'reference' => '86e761949019ae83f49240b2f2123fb5ab3b2fc5',
             'dev_requirement' => true,
+        ),
+        'psr/log' => array(
+            'pretty_version' => '3.0.0',
+            'version' => '3.0.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../psr/log',
+            'aliases' => array(),
+            'reference' => 'fe5ea303b0887d5caefd3d431c3e61ad47037001',
+            'dev_requirement' => false,
+        ),
+        'psr/log-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '1.0.0 || 2.0.0 || 3.0.0',
+            ),
         ),
         'sebastian/cli-parser' => array(
             'pretty_version' => '1.0.1',

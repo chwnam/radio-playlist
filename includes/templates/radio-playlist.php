@@ -22,19 +22,17 @@
         <table>
             <thead>
             <tr>
-                <th>Track ID</th>
                 <th>Artist</th>
                 <th>Titile</th>
                 <th>Length</th>
                 <th>Started</th>
-                <th>Video</th>
-                <th>Search</th>
+                <th>YouTube</th>
+                <th>YT Music</th>
             </tr>
             </thead>
             <tbody>
 			<?php foreach ( $result->items as $item ) : ?>
                 <tr>
-                    <td><?php echo esc_html( $item->track_id ); ?></td>
                     <td><?php echo esc_html( $item->artist ); ?></td>
                     <td><?php echo esc_html( $item->title ); ?></td>
                     <td><?php echo esc_html( rapl_format_runtime( $item->length ) ); ?></td>
@@ -43,23 +41,46 @@
 						<?php
 						$url = add_query_arg(
 							[
-								'action'   => 'rapl_get_video',
-								'nonce'    => wp_create_nonce( 'rapl_get_video_' . $item->track_id ),
+								'action'   => 'rapl_get_youtube_video',
+								'nonce'    => wp_create_nonce( 'rapl_get_youtube_video_' . $item->track_id ),
 								'track_id' => $item->track_id,
 							],
 							admin_url( 'admin-post.php' )
 						)
 						?>
-                        <a href="<?php echo esc_url( $url ); ?>" target="_blank">Video</a>
-                    </td>
-                    <td>
+                        <a href="<?php echo esc_url( $url ); ?>" target="_blank">Direct</a>
+                        <br>
 						<?php
 						$url = add_query_arg(
 							'search_query',
-							urlencode( "$item->artist $item->title" ),
+							urlencode( sprintf( 'Thresh metal "%s" topic "%s"', $item->artist, $item->title ) ),
 							'https://www.youtube.com/results'
 						);
 						?>
+                        <a href="<?php echo esc_url( $url ); ?>"
+                           target="_blank"
+                           rel="nofollow noreferrer external">Search</a>
+                    </td>
+                    <td>
+	                    <?php
+	                    $url = add_query_arg(
+		                    [
+			                    'action'   => 'rapl_get_youtube_music',
+			                    'nonce'    => wp_create_nonce( 'rapl_get_youtube_music_' . $item->track_id ),
+			                    'track_id' => $item->track_id,
+		                    ],
+		                    admin_url( 'admin-post.php' )
+	                    )
+	                    ?>
+                        <a href="<?php echo esc_url( $url ); ?>" target="_blank">Direct</a>
+                        <br>
+	                    <?php
+	                    $url = add_query_arg(
+		                    'q',
+		                    urlencode( sprintf( 'Thresh metal "%s" topic "%s"', $item->artist, $item->title ) ),
+		                    'https://music.youtube.com/search'
+	                    );
+	                    ?>
                         <a href="<?php echo esc_url( $url ); ?>"
                            target="_blank"
                            rel="nofollow noreferrer external">Search</a>

@@ -3,21 +3,26 @@
  * RAPL: Youtube video extract module
  */
 
-/* ABSPATH check */
-
 use JetBrains\PhpStorm\NoReturn;
+use Monolog\Logger;
 
+/* ABSPATH check */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'RAPL_YouTube_Video' ) ) {
-	class RAPL_YouTube_Video implements RAPL_Module {
-		#[NoReturn]
-		public function submit_get_video(): void {
+if ( ! class_exists( 'RAPL_YouTube' ) ) {
+	class RAPL_YouTube implements RAPL_Module {
+		private Logger $logger;
+
+		public function __construct() {
+			$this->logger = rapl_get_logger();
+		}
+
+		#[NoReturn] public function submit_get_youtube_video() {
 			$track_id = (int) ( $_GET['track_id'] ?? '0' );
 
-			check_admin_referer( 'rapl_get_video_' . $track_id, 'nonce' );
+			check_admin_referer( 'rapl_get_youtube_video_' . $track_id, 'nonce' );
 
 			$video_id = $this->extract_video_id( $track_id );
 
@@ -29,10 +34,34 @@ if ( ! class_exists( 'RAPL_YouTube_Video' ) ) {
 			exit;
 		}
 
+		#[NoReturn] public function submit_get_youtube_music() {
+			$track_id = (int) ( $_GET['track_id'] ?? '0' );
+
+			check_admin_referer( 'rapl_get_youtube_music_' . $track_id, 'nonce' );
+
+			$video_id = $this->extract_video_id( $track_id );
+
+			if ( ! $video_id ) {
+				wp_die( 'Video ID not found!' );
+			}
+
+			$url = add_query_arg(
+				[
+					'feafure'=>'share',
+					'v' => $video_id,
+				],
+				'https://music.youtube.com/watch'
+			);
+
+			wp_redirect( $url );
+			exit;
+		}
+
 		public function extract_video_id( int $track_id ): string {
-			$artist_title = $this->get_artist_title( $track_id );
+			$artist_title = $this->get_search_query( $track_id );
 
 			if ( ! $artist_title ) {
+				$this->logger->error( "Track id $track_id: empty artist and title." );
 				return '';
 			}
 
@@ -40,7 +69,8 @@ if ( ! class_exists( 'RAPL_YouTube_Video' ) ) {
 			$res  = wp_remote_get( $url );
 			$body = wp_remote_retrieve_body( $res );
 
-			if ( ! preg_match( '/<script nonce="[A-Za-z0-9\-]+">var ytInitialData = (.+);<\\/script>/', $body, $matches ) ) {
+			if ( ! preg_match( '/<script nonce="[A-Za-z0-9_\-]+">var ytInitialData = (.+);<\\/script>/', $body, $matches ) ) {
+				$this->logger->error( "Track id $track_id: no regex match." );
 				return '';
 			}
 
@@ -58,10 +88,16 @@ if ( ! class_exists( 'RAPL_YouTube_Video' ) ) {
 				?->videoRenderer
 				?->videoId;
 
-			return $video_id ?? '';
+			if ( ! $video_id ) {
+				$this->logger->error( "Track ID $track_id, video ID not found!" );
+				return '';
+			}
+
+			$this->logger->debug( "Track ID $track_id, $artist_title, found video ID: $video_id" );
+			return $video_id;
 		}
 
-		protected function get_artist_title( int $track_id ): string {
+		protected function get_search_query( int $track_id ): string {
 			global $wpdb;
 
 			$query = $wpdb->prepare(
@@ -73,7 +109,7 @@ if ( ! class_exists( 'RAPL_YouTube_Video' ) ) {
 
 			$record = $wpdb->get_row( $query );
 
-			return $record ? "$record->name $record->title" : "";
+			return $record ? sprintf( 'thresh metal "%s" topic "%s"', $record->name, $record->title ) : '';
 		}
 	}
 }

@@ -5,6 +5,13 @@
  * functions.php
  */
 
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Registry;
+
+
 // PHP_SAPI check make you run unit tests safely.
 if ( ! defined( 'ABSPATH' ) && 'cli' !== PHP_SAPI ) {
 	exit;
@@ -144,5 +151,57 @@ if ( ! function_exists( 'rapl_format_runtime' ) ) {
 if ( ! function_exists( 'rapl_format_timestamp' ) ) {
 	function rapl_format_timestamp( int $timestamp ): string {
 		return wp_date( 'Y-m-d H:i:s', $timestamp );
+	}
+}
+
+
+if ( ! function_exists( 'rapl_create_upload_directory' ) ) {
+	function rapl_get_upload_private_directory( string $subdir = '' ): string {
+		$dir        = wp_get_upload_dir();
+		$subdir     = trim( $subdir, "\\/" );
+		$upload_dir = untrailingslashit( $dir['basedir'] ) . "/rapl";
+
+		if ( ! file_exists( $upload_dir ) ) {
+			mkdir( $upload_dir );
+			file_put_contents( "$upload_dir/.htaccess", 'Require all denied' );
+		}
+
+		if ( $subdir ) {
+			$upload_dir = "$upload_dir/$subdir";
+			if ( file_exists( $upload_dir ) ) {
+				wp_mkdir_p( $upload_dir );
+			}
+		}
+
+		return $upload_dir;
+	}
+}
+
+
+if ( ! function_exists( 'rapl_get_log_directory' ) ) {
+	function rapl_get_log_directory(): string {
+		return rapl_get_upload_private_directory( 'log' );
+	}
+}
+
+
+if ( ! function_exists( 'rapl_get_logger' ) ) {
+	function rapl_get_logger(): Logger {
+		if ( Registry::hasLogger( 'rapl' ) ) {
+			$logger = Registry::getInstance( 'rapl' );
+		} else {
+			$dir = rapl_get_log_directory();
+
+			$formatter = new LineFormatter();
+			$handler   = new RotatingFileHandler( "$dir/rapl.log", 7 );
+			$logger    = new Logger( 'rapl' );
+
+			$handler->setFormatter( $formatter );
+			$logger->pushHandler( $handler );
+
+			Registry::addLogger( $logger );
+		}
+
+		return $logger;
 	}
 }

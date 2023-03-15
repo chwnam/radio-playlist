@@ -51,7 +51,8 @@
   "require": {
     "php": "^8.0|^8.1",
     "ext-json": "*",
-    "ext-zip": "*"
+    "ext-zip": "*",
+    "monolog/monolog": "^2.9"
   },
   "version": "0.1.0",
   "require-dev": {

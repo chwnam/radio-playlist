@@ -16,7 +16,7 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 	 * @property-read RAPL_Registers          $registers
 	 * @property-read RAPL_Runner             $runner
 	 * @property-read RAPL_Shortcode_Handlers $shortcode_handlers
-	 * @property-read RAPL_YouTube_Video      $youtube_video
+	 * @property-read RAPL_YouTube            $youtube
 	 */
 	class RAPL_Main extends RAPL_Main_Base {
 		/**
@@ -32,7 +32,7 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 				'registers'          => RAPL_Registers::class,
 				'runner'             => RAPL_Runner::class,
 				'shortcode_handlers' => fn() => $this->new_instance( RAPL_Shortcode_Handlers:: class ),
-				'youtube_video'      => fn() => $this->new_instance( RAPL_YouTube_Video::class ),
+				'youtube'            => fn() => $this->new_instance( RAPL_YouTube::class ),
 			];
 		}
 

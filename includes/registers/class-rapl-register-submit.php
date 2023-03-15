@@ -14,8 +14,11 @@ if ( ! class_exists( 'RAPL_Register_Submit' ) ) {
 		// protected bool $autobind = false;
 
 		public function get_items(): Generator {
-			/** @uses RAPL_YouTube_Video::submit_get_video() */
-			yield new RAPL_Reg_Submit( 'rapl_get_video', 'youtube_video@submit_get_video', true );
+			/** @uses RAPL_YouTube::submit_get_youtube_video() */
+			yield new RAPL_Reg_Submit( 'rapl_get_youtube_video', 'youtube@submit_get_youtube_video', true );
+
+			/** @uses RAPL_YouTube::submit_get_youtube_music() */
+			yield new RAPL_Reg_Submit( 'rapl_get_youtube_music', 'youtube@submit_get_youtube_music', true );
 		}
 	}
 }

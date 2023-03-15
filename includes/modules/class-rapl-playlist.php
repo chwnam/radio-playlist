@@ -104,17 +104,14 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 
 		public function dump( array $items, string $path = '' ): void {
 			if ( ! $path ) {
-				$up      = wp_get_upload_dir();
-				$basedir = untrailingslashit( $up['basedir'] );
+				$basedir = rapl_get_upload_private_directory( 'dump' );
 				$date    = wp_date( 'Ymd-His' );
-
-				$path = "$basedir/rapl-$date.json";
+				$path    = "$basedir/rapl-$date.json";
 			}
 
-			file_put_contents(
-				$path,
-				wp_json_encode( $items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE )
-			);
+			$encoded = wp_json_encode( $items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+
+			file_put_contents( $path, $encoded );
 		}
 
 		public function get_channel(): int {
