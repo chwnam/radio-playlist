@@ -24,4 +24,4 @@ node_modules
 !/vendor/autoload.php
 
 # Comment out below when you release this.
-*.lock
+# *.lock
