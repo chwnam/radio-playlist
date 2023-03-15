@@ -47,8 +47,8 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 
 			$url = add_query_arg(
 				[
-					'feafure'=>'share',
-					'v' => $video_id,
+					'feafure' => 'share',
+					'v'       => $video_id,
 				],
 				'https://music.youtube.com/watch'
 			);
@@ -58,14 +58,14 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 		}
 
 		public function extract_video_id( int $track_id ): string {
-			$artist_title = $this->get_search_query( $track_id );
+			$artist_title = $this->get_artist_title( $track_id );
 
 			if ( ! $artist_title ) {
 				$this->logger->error( "Track id $track_id: empty artist and title." );
 				return '';
 			}
 
-			$url  = add_query_arg( 'search_query', urlencode( $artist_title ), 'https://www.youtube.com/results' );
+			$url  = self::get_search_query_url( $artist_title[0], $artist_title[1], 'video' );
 			$res  = wp_remote_get( $url );
 			$body = wp_remote_retrieve_body( $res );
 
@@ -77,27 +77,47 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 			$data = trim( $matches[1] );
 			$obj  = json_decode( $data );
 
-			$video_id = $obj
+//			$video_id = $obj
+//				?->contents
+//				?->twoColumnSearchResultsRenderer
+//				?->primaryContents
+//				?->sectionListRenderer
+//				?->contents[0]
+//				?->itemSectionRenderer
+//				?->contents[0]
+//				?->videoRenderer
+//				?->videoId;
+
+			$contents = $obj
 				?->contents
 				?->twoColumnSearchResultsRenderer
 				?->primaryContents
 				?->sectionListRenderer
 				?->contents[0]
 				?->itemSectionRenderer
-				?->contents[0]
-				?->videoRenderer
-				?->videoId;
+				?->contents;
+
+			$video_id = ( $contents[0]->videoRenderer ?? null )?->videoId;
+
+			if ( ! $video_id ) {
+				for ( $i = 1; $i < count( $contents ); ++ $i ) {
+					$video_id = ( $contents[ $i ]->videoRenderer ?? null )?->videoId;
+					if ( $video_id ) {
+						break;
+					}
+				}
+			}
 
 			if ( ! $video_id ) {
 				$this->logger->error( "Track ID $track_id, video ID not found!" );
 				return '';
 			}
 
-			$this->logger->debug( "Track ID $track_id, $artist_title, found video ID: $video_id" );
+			$this->logger->debug( "Track ID $track_id's video ID: $video_id" );
 			return $video_id;
 		}
 
-		protected function get_search_query( int $track_id ): string {
+		protected function get_artist_title( int $track_id ): array {
 			global $wpdb;
 
 			$query = $wpdb->prepare(
@@ -109,7 +129,41 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 
 			$record = $wpdb->get_row( $query );
 
-			return $record ? sprintf( 'thresh metal "%s" topic "%s"', $record->name, $record->title ) : '';
+			return $record ? [ $record->name, $record->title ] : [];
+		}
+
+		public static function get_search_query_format(): string {
+			return 'thrash metal topic "%1$s" "%2$s"';
+		}
+
+		public static function get_search_query_url( string $artist, string $title, string $type ): string {
+			$query = urlencode( sprintf( static::get_search_query_format(), $artist, $title ) );
+
+			return match ( $type ) {
+				'video' => add_query_arg( 'search_query', $query, 'https://www.youtube.com/results' ),
+				'music' => add_query_arg( 'q', $query, 'https://music.youtube.com/search' ),
+			};
+		}
+
+		public static function get_direct_url( int $track_id, string $type ): string {
+			return match ( $type ) {
+				'video' => add_query_arg(
+					[
+						'action'   => 'rapl_get_youtube_video',
+						'nonce'    => wp_create_nonce( 'rapl_get_youtube_video_' . $track_id ),
+						'track_id' => $track_id,
+					],
+					admin_url( 'admin-post.php' )
+				),
+				'music' => add_query_arg(
+					[
+						'action'   => 'rapl_get_youtube_music',
+						'nonce'    => wp_create_nonce( 'rapl_get_youtube_music_' . $track_id ),
+						'track_id' => $track_id,
+					],
+					admin_url( 'admin-post.php' )
+				),
+			};
 		}
 	}
 }

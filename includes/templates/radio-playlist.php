@@ -38,50 +38,18 @@
                     <td><?php echo esc_html( rapl_format_runtime( $item->length ) ); ?></td>
                     <td><?php echo esc_html( rapl_format_timestamp( $item->started ) ); ?></td>
                     <td>
-						<?php
-						$url = add_query_arg(
-							[
-								'action'   => 'rapl_get_youtube_video',
-								'nonce'    => wp_create_nonce( 'rapl_get_youtube_video_' . $item->track_id ),
-								'track_id' => $item->track_id,
-							],
-							admin_url( 'admin-post.php' )
-						)
-						?>
-                        <a href="<?php echo esc_url( $url ); ?>" target="_blank">Direct</a>
+                        <a href="<?php echo esc_url( RAPL_YouTube::get_direct_url( $item->track_id, 'video' ) ); ?>"
+                           target="_blank">Direct</a>
                         <br>
-						<?php
-						$url = add_query_arg(
-							'search_query',
-							urlencode( sprintf( 'Thresh metal "%s" topic "%s"', $item->artist, $item->title ) ),
-							'https://www.youtube.com/results'
-						);
-						?>
-                        <a href="<?php echo esc_url( $url ); ?>"
+                        <a href="<?php echo esc_url( RAPL_YouTube::get_search_query_url( $item->artist, $item->title, 'video' ) ); ?>"
                            target="_blank"
                            rel="nofollow noreferrer external">Search</a>
                     </td>
                     <td>
-	                    <?php
-	                    $url = add_query_arg(
-		                    [
-			                    'action'   => 'rapl_get_youtube_music',
-			                    'nonce'    => wp_create_nonce( 'rapl_get_youtube_music_' . $item->track_id ),
-			                    'track_id' => $item->track_id,
-		                    ],
-		                    admin_url( 'admin-post.php' )
-	                    )
-	                    ?>
-                        <a href="<?php echo esc_url( $url ); ?>" target="_blank">Direct</a>
+                        <a href="<?php echo esc_url( RAPL_YouTube::get_direct_url( $item->track_id, 'music' ) ); ?>"
+                           target="_blank">Direct</a>
                         <br>
-	                    <?php
-	                    $url = add_query_arg(
-		                    'q',
-		                    urlencode( sprintf( 'Thresh metal "%s" topic "%s"', $item->artist, $item->title ) ),
-		                    'https://music.youtube.com/search'
-	                    );
-	                    ?>
-                        <a href="<?php echo esc_url( $url ); ?>"
+                        <a href="<?php echo esc_url( RAPL_YouTube::get_search_query_url( $item->artist, $item->title, 'music' ) ); ?>"
                            target="_blank"
                            rel="nofollow noreferrer external">Search</a>
                     </td>
