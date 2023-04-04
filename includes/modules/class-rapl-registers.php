@@ -68,7 +68,7 @@ if ( ! class_exists( 'RAPL_Registers' ) ) {
 //					'option'        => RAPL_Register_Option::class,
 //					'post_meta'     => RAPL_Register_Post_Meta::class,
 //					'post_type'     => RAPL_Register_Post_Type::class,
-//					'rest_route'    => RAPL_Register_REST_Route::class,
+					'rest_route'    => RAPL_Register_REST_Route::class,
 //					'rewrite_rule'  => RAPL_Register_Rewrite_Rule::class,
 //					'role'          => function () { return new RAPL_Register_Role(); },
 //					'script'        => RAPL_Register_Script::class,

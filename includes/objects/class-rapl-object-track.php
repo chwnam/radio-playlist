@@ -1,6 +1,8 @@
 <?php
 /**
  * RAPL: Track object
+ *
+ * NOTE: Only for fetch from the remote server.
  */
 
 /* ABSPATH check */

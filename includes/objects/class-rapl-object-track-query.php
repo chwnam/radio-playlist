@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'RAPL_Object_Track_Query' ) ) {
 	class RAPL_Object_Track_Query {
-		/** @var RAPL_Object_Track[] $items */
+		/** @var RAPL_Object_Track_History[] $items */
 		public array $items = [];
 
 		public int $total = 0;

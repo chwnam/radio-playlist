@@ -33,8 +33,7 @@ if ( ! class_exists( 'RAPL_Register_REST_Route' ) ) {
 		 *         );
 		 */
 		public function get_items(): Generator {
-			yield; // yield new RAPL_Reg_REST_Route();
-			       // yield WP_REST_Controller_Subclass::class;
+			yield from RAPL_REST_Routes::get_regs();
 		}
 	}
 }

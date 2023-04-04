@@ -14,6 +14,7 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 	 * @property-read RAPL_Admin              $admin
 	 * @property-read RAPL_Playlist           $playlist
 	 * @property-read RAPL_Registers          $registers
+	 * @property-read RAPL_REST_Routes        $rest_routes
 	 * @property-read RAPL_Runner             $runner
 	 * @property-read RAPL_Shortcode_Handlers $shortcode_handlers
 	 * @property-read RAPL_YouTube            $youtube
@@ -30,6 +31,7 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 				'admin'              => RAPL_Admin::class,
 				'playlist'           => fn() => $this->new_instance( RAPL_Playlist::class ),
 				'registers'          => RAPL_Registers::class,
+				'rest_routes'        => RAPL_REST_Routes::class,
 				'runner'             => RAPL_Runner::class,
 				'shortcode_handlers' => fn() => $this->new_instance( RAPL_Shortcode_Handlers:: class ),
 				'youtube'            => fn() => $this->new_instance( RAPL_YouTube::class ),

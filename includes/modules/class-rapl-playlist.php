@@ -129,14 +129,15 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			$per_page = min( 100, max( 1, $args['per_page'] ) );
 
 			$fields = [
-				"t.id AS track_id",
-				"a.name AS artist",
-				"t.title",
-				"t.length",
-				"t.art_url",
 				"h.network_id",
 				"h.channel_id",
+				"t.id AS track_id",
+				"t.title",
+				"a.id AS artist_id",
+				"a.name AS artist_name",
+				"t.length",
 				"h.started",
+				"t.art_url",
 			];
 
 			$f      = implode( ', ', $fields );
@@ -162,7 +163,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			$rows       = $wpdb->get_results( $query );
 			$time       = $wpdb->timer_stop();
 			$found_rows = (int) $wpdb->get_var( "SELECT FOUND_ROWS()" );
-			$records    = array_map( [ RAPL_Object_Track::class, 'from_object' ], $rows );
+			$records    = array_map( [ RAPL_Object_Track_History::class, 'from_object' ], $rows );
 
 			$result              = new RAPL_Object_Track_Query();
 			$result->items       = $records;
