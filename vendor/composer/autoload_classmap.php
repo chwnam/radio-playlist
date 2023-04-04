@@ -148,6 +148,7 @@ return array(
     'RAPL_Main' => $baseDir . '/includes/class-rapl-main.php',
     'RAPL_Main_Base' => $baseDir . '/core/class-rapl-main-base.php',
     'RAPL_Module' => $baseDir . '/core/interfaces/interface-rapl-module.php',
+    'RAPL_Object_Artist' => $baseDir . '/includes/objects/class-rapl-object-artist.php',
     'RAPL_Object_Track' => $baseDir . '/includes/objects/class-rapl-object-track.php',
     'RAPL_Object_Track_Query' => $baseDir . '/includes/objects/class-rapl-object-track-query.php',
     'RAPL_Playlist' => $baseDir . '/includes/modules/class-rapl-playlist.php',

@@ -177,6 +177,7 @@ class ComposerStaticInit2418b52594ec78c47863bae34d4fe8b9
         'RAPL_Main' => __DIR__ . '/../..' . '/includes/class-rapl-main.php',
         'RAPL_Main_Base' => __DIR__ . '/../..' . '/core/class-rapl-main-base.php',
         'RAPL_Module' => __DIR__ . '/../..' . '/core/interfaces/interface-rapl-module.php',
+        'RAPL_Object_Artist' => __DIR__ . '/../..' . '/includes/objects/class-rapl-object-artist.php',
         'RAPL_Object_Track' => __DIR__ . '/../..' . '/includes/objects/class-rapl-object-track.php',
         'RAPL_Object_Track_Query' => __DIR__ . '/../..' . '/includes/objects/class-rapl-object-track-query.php',
         'RAPL_Playlist' => __DIR__ . '/../..' . '/includes/modules/class-rapl-playlist.php',

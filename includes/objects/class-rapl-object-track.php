@@ -28,7 +28,7 @@ if ( ! class_exists( 'RAPL_Object_Track' ) ) {
 
 		public string $art_url = '';
 
-		public static function from_array( stdClass $item ): RAPL_Object_Track {
+		public static function from_object( stdClass $item ): RAPL_Object_Track {
 			$obj = new static();
 
 			$obj->network_id = $item->network_id ?? 0;

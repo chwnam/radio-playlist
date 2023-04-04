@@ -20,6 +20,20 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			return 200 === $code && is_array( $body ) ? $body : [];
 		}
 
+		public function get_artist( int $track_id ): ?RAPL_Object_Artist {
+			$url      = "https://api.audioaddict.com/v1/rockradio/tracks/$track_id";
+			$response = wp_remote_get( $url );
+
+			$code = wp_remote_retrieve_response_code( $response );
+			$body = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( 200 === $code && $body ) {
+				return RAPL_Object_Artist::from_object( $body->artist );
+			}
+
+			return null;
+		}
+
 		public function collect( array $items ): void {
 			global $wpdb;
 
@@ -28,57 +42,40 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			}
 
 			foreach ( $items as $item ) {
-				$track = RAPL_Object_Track::from_array( $item );
-
+				$track = RAPL_Object_Track::from_object( $item );
 				if ( 'track' !== $track->type ) {
 					continue;
 				}
 
-				// Add artist data and get artist id.
-				$artist_id = (int) $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT id FROM {$wpdb->prefix}rapl_artists WHERE name=%s",
-						$track->artist
-					)
-				);
-				if ( ! $artist_id ) {
-					$wpdb->insert( "{$wpdb->prefix}rapl_artists", [ 'name' => $track->artist ] );
-					$artist_id = $wpdb->insert_id;
-				}
+				$artist = $this->get_artist( $track->track_id );
+				sleep( 2 );
 
-				// Get track id.
-				$track_id = (int) $wpdb->get_var(
+				// Insert artist data, if not exists.
+				$wpdb->query(
 					$wpdb->prepare(
-						"SELECT id FROM {$wpdb->prefix}rapl_tracks WHERE id=%d",
-						$track->track_id
+						"INSERT IGNORE INTO {$wpdb->prefix}rapl_artists VALUES(%d, %s)",
+						$artist->id,
+						$artist->name
 					)
 				);
-				if ( ! $track_id ) {
-					$wpdb->insert(
-						"{$wpdb->prefix}rapl_tracks",
-						[
-							'id'        => $track->track_id,
-							'artist_id' => $artist_id,
-							'title'     => $track->title,
-							'length'    => $track->length,
-							'art_url'   => $track->art_url,
-						],
-						[
-							'id'        => '%d',
-							'artist_id' => '%d',
-							'title'     => '%s',
-							'length'    => '%d',
-							'art_url'   => '%s',
-						]
-					);
-					$track_id = $track->track_id;
-				}
+
+				// Insert track data, if not exists.
+				$wpdb->query(
+					$wpdb->prepare(
+						"INSERT IGNORE INTO {$wpdb->prefix}rapl_tracks(id, artist_id, title, length, art_url) VALUES(%d, %d, %s, %d, %s)",
+						$track->track_id,
+						$artist->id,
+						$track->title,
+						$track->length,
+						$track->art_url
+					)
+				);
 
 				// Get history id.
 				$history_id = (int) $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT id FROM {$wpdb->prefix}rapl_history WHERE track_id=%d AND started=%d",
-						$track_id,
+						$track->track_id,
 						$track->started
 					)
 				);
@@ -88,7 +85,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 						[
 							'network_id' => $track->network_id,
 							'channel_id' => $track->channel_id,
-							'track_id'   => $track_id,
+							'track_id'   => $track->track_id,
 							'started'    => $track->started,
 						],
 						[
@@ -165,7 +162,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			$rows       = $wpdb->get_results( $query );
 			$time       = $wpdb->timer_stop();
 			$found_rows = (int) $wpdb->get_var( "SELECT FOUND_ROWS()" );
-			$records    = array_map( [ RAPL_Object_Track::class, 'from_array' ], $rows );
+			$records    = array_map( [ RAPL_Object_Track::class, 'from_object' ], $rows );
 
 			$result              = new RAPL_Object_Track_Query();
 			$result->items       = $records;
