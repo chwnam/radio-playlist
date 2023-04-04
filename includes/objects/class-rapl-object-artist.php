@@ -92,7 +92,7 @@ if ( ! class_exists( 'RAPL_Object_Artist' ) ) {
 		public static function from_object( stdClass $item ): RAPL_Object_Artist {
 			$obj = new static();
 
-			$obj->id = $item->channel_id ?? 0;
+			$obj->id   = $item->id ?? 0;
 			$obj->name = $item->name ?? '';
 
 			return $obj;
