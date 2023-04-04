@@ -33,7 +33,7 @@
             <tbody>
 			<?php foreach ( $result->items as $item ) : ?>
                 <tr>
-                    <td><?php echo esc_html( $item->artist ); ?></td>
+                    <td><?php echo esc_html( $item->artist_name ); ?></td>
                     <td><?php echo esc_html( $item->title ); ?></td>
                     <td><?php echo esc_html( rapl_format_runtime( $item->length ) ); ?></td>
                     <td><?php echo esc_html( rapl_format_timestamp( $item->started ) ); ?></td>
@@ -41,7 +41,7 @@
                         <a href="<?php echo esc_url( RAPL_YouTube::get_direct_url( $item->track_id, 'video' ) ); ?>"
                            target="_blank">Direct</a>
                         <br>
-                        <a href="<?php echo esc_url( RAPL_YouTube::get_search_query_url( $item->artist, $item->title, 'video' ) ); ?>"
+                        <a href="<?php echo esc_url( RAPL_YouTube::get_search_query_url( $item->artist_name, $item->title, 'video' ) ); ?>"
                            target="_blank"
                            rel="nofollow noreferrer external">Search</a>
                     </td>
@@ -49,7 +49,7 @@
                         <a href="<?php echo esc_url( RAPL_YouTube::get_direct_url( $item->track_id, 'music' ) ); ?>"
                            target="_blank">Direct</a>
                         <br>
-                        <a href="<?php echo esc_url( RAPL_YouTube::get_search_query_url( $item->artist, $item->title, 'music' ) ); ?>"
+                        <a href="<?php echo esc_url( RAPL_YouTube::get_search_query_url( $item->artist_name, $item->title, 'music' ) ); ?>"
                            target="_blank"
                            rel="nofollow noreferrer external">Search</a>
                     </td>

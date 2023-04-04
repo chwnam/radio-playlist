@@ -136,8 +136,12 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 			return 'thrash metal topic "%1$s" "%2$s"';
 		}
 
-		public static function get_search_query_url( string $artist, string $title, string $type ): string {
-			$query = urlencode( sprintf( static::get_search_query_format(), $artist, $title ) );
+		public static function get_search_query_url( string $artist_name, string $title, string $type ): string {
+			if ( ! $artist_name || ! $title || ! $type ) {
+				return '';
+			}
+
+			$query = urlencode( sprintf( static::get_search_query_format(), $artist_name, $title ) );
 
 			return match ( $type ) {
 				'video' => add_query_arg( 'search_query', $query, 'https://www.youtube.com/results' ),
