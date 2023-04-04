@@ -36,7 +36,16 @@
                     <td><?php echo esc_html( $item->artist_name ); ?></td>
                     <td><?php echo esc_html( $item->title ); ?></td>
                     <td><?php echo esc_html( rapl_format_runtime( $item->length ) ); ?></td>
-                    <td><?php echo esc_html( rapl_format_timestamp( $item->started ) ); ?></td>
+                    <td>
+                        <time datetime="<?php echo esc_attr( $item->started ); ?>">
+							<?php
+							$time = explode( ' ', rapl_format_timestamp( $item->started ) );;
+							echo esc_html( "$time[0] $time[1] $time[2]" ) .
+							     '<br>' .
+							     esc_html( "$time[3] $time[4] $time[5] $time[6]" );
+							?>
+                        </time>
+                    </td>
                     <td>
                         <a href="<?php echo esc_url( RAPL_YouTube::get_direct_url( $item->track_id, 'video' ) ); ?>"
                            target="_blank">Direct</a>

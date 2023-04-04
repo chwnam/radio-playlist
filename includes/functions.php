@@ -150,7 +150,7 @@ if ( ! function_exists( 'rapl_format_runtime' ) ) {
 
 if ( ! function_exists( 'rapl_format_timestamp' ) ) {
 	function rapl_format_timestamp( int $timestamp ): string {
-		return wp_date( 'Y-m-d H:i:s', $timestamp );
+		return wp_date( 'y년 n월 j일 a g시 i분 s초', $timestamp );
 	}
 }
 
