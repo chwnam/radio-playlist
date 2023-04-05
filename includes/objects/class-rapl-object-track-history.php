@@ -30,6 +30,20 @@ if ( ! class_exists( 'RAPL_Object_Track_History' ) ) {
 
 		public string $art_url = '';
 
+		/**
+		 * @var stdClass{
+		 *     video: stdClass{
+		 *         direct: string,
+		 *         search: string,
+		 *     },
+		 *     music: stdClass{
+		 *         direct: string,
+		 *         search:string
+		 *     }
+		 * }
+		 */
+		public stdClass $youtube;
+
 		public static function from_object( stdClass $item ): RAPL_Object_Track_History {
 			$obj = new static();
 
@@ -43,7 +57,36 @@ if ( ! class_exists( 'RAPL_Object_Track_History' ) ) {
 			$obj->started     = $item->started ?? 0;
 			$obj->art_url     = $item->art_url ?? '';
 
+			if ( $obj->track_id ) {
+				$obj->youtube->music->direct = RAPL_YouTube::get_direct_url( $obj->track_id, 'music' );
+				$obj->youtube->video->direct = RAPL_YouTube::get_direct_url( $obj->track_id, 'video' );
+
+				$obj->youtube->video->search = RAPL_YouTube::get_search_query_url(
+					$obj->artist_name,
+					$obj->title,
+					'video'
+				);
+				$obj->youtube->music->search = RAPL_YouTube::get_search_query_url(
+					$obj->artist_name,
+					$obj->title,
+					'music'
+				);
+			}
+
 			return $obj;
+		}
+
+		public function __construct() {
+			$this->youtube = (object) [
+				'video' => (object) [
+					'direct' => '',
+					'search' => '',
+				],
+				'music' => (object) [
+					'direct' => '',
+					'search' => '',
+				],
+			];
 		}
 	}
 }
