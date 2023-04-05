@@ -263,14 +263,15 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		 *
 		 * @return int
 		 */
-		public function has_track_history_id( int $track_id, int $started_at ): int {
+		public function has_track_history_id( int $track_id, int $started ): bool {
 			global $wpdb;
 
-			return (int) $wpdb->get_var(
+			return (bool) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}rapl_history WHERE track_id=%d AND started=%d",
+					"SELECT id FROM {$wpdb->prefix}rapl_history WHERE network_id=13 AND channel_id=%d AND track_id=%d AND started=%d",
+					$this->get_channel(),
 					$track_id,
-					$started_at
+					$started
 				)
 			);
 		}
@@ -330,8 +331,8 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		protected function insert_track_history( RAPL_Object_Track $track ): void {
 			global $wpdb;
 
-			$query = "INSERT IGNORE INTO {$wpdb->prefix}rapl_history(id, network_id, channel_id, track_id, started)" .
-			         " VALUES(%d, %d, %d, %d, %d)";
+			$query = "INSERT IGNORE INTO {$wpdb->prefix}rapl_history(network_id, channel_id, track_id, started)" .
+			         " VALUES(%d, %d, %d, %d)";
 
 			$wpdb->query(
 				$wpdb->prepare(
