@@ -73,6 +73,11 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 			// $this->add_filter( "plugin_action_links_$plugin", 'add_plugin_action_links' );
 
 			// phpcs:enable Squiz.PHP.CommentedOutCode, Squiz.Commenting.InlineComment.InvalidEndChar
+
+			$this->add_filter( 'rest_exposed_cors_headers', function ( array $expose_headers ) {
+				$expose_headers[] = 'X-Rapl-TimeSpent';
+				return $expose_headers;
+			} );
 		}
 
 		/**

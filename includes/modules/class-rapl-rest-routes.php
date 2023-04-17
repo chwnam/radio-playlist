@@ -42,6 +42,12 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 							'default'           => 10,
 							'sanitize_callback' => fn( $v ) => min( 100, max( 1, absint( $v ) ) ),
 						],
+						'search' => [
+							'required'          => false,
+							'description'       => '곡 제목이나 아티스트 이름을 검색',
+							'default'           => '',
+							'sanitize_callback' => 'sanitize_text_field',
+						]
 					],
 				]
 			);
@@ -50,11 +56,13 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 		public function list( WP_REST_Request $request ): WP_REST_Response {
 			$page     = $request->get_param( 'page' );
 			$per_page = $request->get_param( 'per_page' );
+			$search   = $request->get_param( 'search' );
 
 			$result = rapl()->playlist->query(
 				[
 					'page'     => $page,
 					'per_page' => $per_page,
+					'search'   => $search,
 				]
 			);
 
