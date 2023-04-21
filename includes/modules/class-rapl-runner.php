@@ -28,13 +28,21 @@ if ( ! class_exists( 'RAPL_Runner' ) ) {
 
 			$module = rapl()->playlist;
 
-			$items = $module->fetch();
+			$channels = [
+				$module->get_channel_thrash_metal(),
+				$module->get_channel_power_metal(),
+			];
 
-			if ( $this->is_debug() ) {
-				$module->dump( $items );
+			foreach ( $channels as $channel ) {
+				$items = $module->fetch( $channel );
+
+				if ( $this->is_debug() ) {
+					$module->dump( $items, '', (string) $channel );
+				}
+
+				$module->collect( $items );
+				sleep( 2 );
 			}
-
-			$module->collect( $items );
 		}
 
 		/**

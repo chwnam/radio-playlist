@@ -24,12 +24,14 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		/**
 		 * 원격 서버로부터 채널의 방송 목록을 가져온다.
 		 *
+		 * @param int $channel 채널 ID.
+		 *
 		 * @return array
 		 */
-		public function fetch(): array {
+		public function fetch( int $channel ): array {
 			$this->logger->info( 'Getting channel track history.' );
 
-			$url      = 'https://api.audioaddict.com/v1/rockradio/track_history/channel/' . $this->get_channel();
+			$url      = "https://api.audioaddict.com/v1/rockradio/track_history/channel/$channel";
 			$response = wp_remote_get( $url );
 
 			$code = wp_remote_retrieve_response_code( $response );
@@ -131,16 +133,17 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		/**
 		 * 데이터 덤프.
 		 *
-		 * @param array  $items 서버로부터 받은 내용 그대로.
-		 * @param string $path  덤프할 경로. 생략시 약속한 기본 장소에 덤프.
+		 * @param array  $items   서버로부터 받은 내용 그대로.
+		 * @param string $path    덤프할 경로. 생략시 약속한 기본 장소에 덤프.
+		 * @param string $postfix 파일 이름에 붙일 접미. 경로 생략시에만 유효합니다.
 		 *
 		 * @return void
 		 */
-		public function dump( array $items, string $path = '' ): void {
+		public function dump( array $items, string $path = '', string $postfix = '' ): void {
 			if ( ! $path ) {
 				$basedir = rapl_get_upload_private_directory( 'dump' );
 				$date    = wp_date( 'Ymd-His' );
-				$path    = "$basedir/rapl-$date.json";
+				$path    = "$basedir/rapl$postfix-$date.json";
 			}
 
 			$encoded = wp_json_encode( $items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
@@ -149,12 +152,21 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		}
 
 		/**
-		 * 채널 정보 리턴.
+		 * 스래치 메탈 채널 ID 리턴.
 		 *
 		 * @return int
 		 */
-		public function get_channel(): int {
-			return 192; // Thrash metal.
+		public function get_channel_thrash_metal(): int {
+			return 192;
+		}
+
+		/**
+		 * 파워 메탈 채널 ID 리턴.
+		 *
+		 * @return int
+		 */
+		public function get_channel_power_metal(): int {
+			return 163;
 		}
 
 		/**
