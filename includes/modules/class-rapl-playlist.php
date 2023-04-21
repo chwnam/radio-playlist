@@ -68,11 +68,12 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		/**
 		 * 원격 서버로부터 수신한 방송 목록을 데이터베이스에 저장한다.
 		 *
+		 * @param int   $channel
 		 * @param array $items
 		 *
 		 * @return void
 		 */
-		public function collect( array $items ): void {
+		public function collect( int $channel,  array $items ): void {
 			/** @var RAPL_Object_Track[] $tracks */
 			$tracks = array_map( [ 'RAPL_Object_Track', 'from_object' ], $items );
 
@@ -113,7 +114,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 				}
 
 				// Add track history.
-				if ( ! $this->has_track_history_id( $track->track_id, $track->started ) ) {
+				if ( ! $this->has_track_history_id( $channel, $track->track_id, $track->started ) ) {
 					$this->insert_track_history( $track );
 					$new_history += 1;
 				}
@@ -143,7 +144,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			if ( ! $path ) {
 				$basedir = rapl_get_upload_private_directory( 'dump' );
 				$date    = wp_date( 'Ymd-His' );
-				$path    = "$basedir/rapl$postfix-$date.json";
+				$path    = "$basedir/rapl-$postfix-$date.json";
 			}
 
 			$encoded = wp_json_encode( $items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
@@ -270,18 +271,19 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		/**
 		 * 트랙의 방송 내역이 저장되었는지 확인.
 		 *
+		 * @param int $channel
 		 * @param int $track_id
-		 * @param int $started_at
+		 * @param int $started
 		 *
-		 * @return int
+		 * @return bool
 		 */
-		public function has_track_history_id( int $track_id, int $started ): bool {
+		public function has_track_history_id( int $channel, int $track_id, int $started ): bool {
 			global $wpdb;
 
 			return (bool) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT id FROM {$wpdb->prefix}rapl_history WHERE network_id=13 AND channel_id=%d AND track_id=%d AND started=%d",
-					$this->get_channel(),
+					$channel,
 					$track_id,
 					$started
 				)

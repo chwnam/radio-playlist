@@ -40,7 +40,7 @@ if ( ! class_exists( 'RAPL_Runner' ) ) {
 					$module->dump( $items, '', (string) $channel );
 				}
 
-				$module->collect( $items );
+				$module->collect( $channel, $items );
 				sleep( 2 );
 			}
 		}

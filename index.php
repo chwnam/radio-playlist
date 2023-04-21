@@ -3,7 +3,7 @@
  * Plugin Name:       라디오 플레이리스트
  * Plugin URI:        https://github.com/chwnam/radio-playlist
  * Description:       Radio Addict 라디오의 플레이리스트를 개인적으로 저장하는 프로젝트.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 5.0.0
  * Requires PHP:      8.0
  * Author:            changwoo
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 const RAPL_MAIN_FILE = __FILE__;
-const RAPL_VERSION   = '1.1.0';
+const RAPL_VERSION   = '1.1.1';
 const RAPL_PRIORITY  = 8000;
 
 rapl();
