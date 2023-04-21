@@ -133,7 +133,7 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 		}
 
 		public static function get_search_query_format(): string {
-			return 'thrash metal topic "%1$s" "%2$s"';
+			return '"%1$s" "%2$s"';
 		}
 
 		public static function get_search_query_url( string $artist_name, string $title, string $type ): string {
