@@ -73,7 +73,7 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		 *
 		 * @return void
 		 */
-		public function collect( int $channel,  array $items ): void {
+		public function collect( int $channel, array $items ): void {
 			/** @var RAPL_Object_Track[] $tracks */
 			$tracks = array_map( [ 'RAPL_Object_Track', 'from_object' ], $items );
 
@@ -181,9 +181,11 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			global $wpdb;
 
 			$defaults = [
-				'page'     => 1,
-				'per_page' => 10,
-				'search'   => '',
+				'artist_id' => 0,
+				'page'      => 1,
+				'per_page'  => 10,
+				'search'    => '',
+				'track_id'  => 0,
 			];
 
 			$args     = wp_parse_args( $args, $defaults );
@@ -214,6 +216,14 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 					$like,
 					$like
 				);
+			}
+
+			if ( $args['artist_id'] ) {
+				$where .= $wpdb->prepare( " AND a.id=%d", $args['artist_id'] );
+			}
+
+			if ( $args['track_id'] ) {
+				$where .= $wpdb->prepare( " AND t.id=%d", $args['track_id'] );
 			}
 
 			$query = "SELECT SQL_CALC_FOUND_ROWS $f FROM {$wpdb->prefix}rapl_artists AS a" .
