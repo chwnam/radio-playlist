@@ -23,6 +23,19 @@ if ( ! class_exists( 'RAPL_CLI' ) ) {
 		}
 
 		/**
+		 * Run now.
+		 *
+		 * @return void
+		 */
+		public function run(): void {
+			WP_CLI::line( WP_CLI::colorize( "%GRunning now...%N" ) );
+
+			rapl()->runner->rapl_playlist();
+
+			WP_CLI::success( "Done!" );
+		}
+
+		/**
 		 * Restore from dump files.
 		 *
 		 * ## OPTIONS
@@ -33,7 +46,7 @@ if ( ! class_exists( 'RAPL_CLI' ) ) {
 		 * @param array $args
 		 *
 		 * @return void
-		 * @throws \WP_CLI\ExitException
+		 * @throws WP_CLI\ExitException
 		 */
 		public function import( array $args ): void {
 			$path = realpath( $args[0] );
@@ -52,7 +65,7 @@ if ( ! class_exists( 'RAPL_CLI' ) ) {
 				WP_CLI::error( 'Invalid JSON file.' );
 			}
 
-			$start = microtime( true );
+			$start  = microtime( true );
 			$module = rapl()->playlist;
 			$module->collect( $items );
 			$finish = microtime( true );

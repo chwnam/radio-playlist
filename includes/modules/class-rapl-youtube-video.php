@@ -19,7 +19,8 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 			$this->logger = rapl_get_logger();
 		}
 
-		#[NoReturn] public function submit_get_youtube_video() {
+		#[NoReturn]
+		public function submit_get_youtube_video(): void {
 			$track_id = (int) ( $_GET['track_id'] ?? '0' );
 
 			check_admin_referer( 'rapl_get_youtube_video_' . $track_id, 'nonce' );
@@ -34,7 +35,8 @@ if ( ! class_exists( 'RAPL_YouTube' ) ) {
 			exit;
 		}
 
-		#[NoReturn] public function submit_get_youtube_music() {
+		#[NoReturn]
+		public function submit_get_youtube_music(): void {
 			$track_id = (int) ( $_GET['track_id'] ?? '0' );
 
 			check_admin_referer( 'rapl_get_youtube_music_' . $track_id, 'nonce' );
