@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 	class RAPL_REST_Routes implements RAPL_Module {
 		const NAMESPACE = 'rapl/v1';
-		const MODULE = 'rest_routes';
+		const MODULE    = 'rest_routes';
 
 		/**
 		 * @return Generator
@@ -32,23 +32,39 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 					'callback'            => "$module@playlist",
 					'permission_callback' => '__return_true',
 					'args'                => [
-						'page'     => [
+						'artist_id'  => [
+							'required'          => true,
+							'description'       => '아티스트 ID',
+							'sanitize_callback' => fn( $v ) => absint( $v ),
+						],
+						'channel_id' => [
+							'required'          => false,
+							'default'           => 0,
+							'description'       => '채널 ID',
+							'sanitize_callback' => fn( $v ) => absint( $v ),
+						],
+						'page'       => [
 							'required'          => false,
 							'description'       => '가져올 페이지 번호',
 							'default'           => 1,
 							'sanitize_callback' => fn( $v ) => max( 1, absint( $v ) ),
 						],
-						'per_page' => [
+						'per_page'   => [
 							'required'          => false,
 							'description'       => '페이지당 항목 수',
 							'default'           => 10,
 							'sanitize_callback' => fn( $v ) => min( 100, max( 1, absint( $v ) ) ),
 						],
-						'search'   => [
+						'search'     => [
 							'required'          => false,
 							'description'       => '곡 제목이나 아티스트 이름을 검색',
 							'default'           => '',
 							'sanitize_callback' => 'sanitize_text_field',
+						],
+						'track_id'   => [
+							'required'          => true,
+							'description'       => '트랙 ID',
+							'sanitize_callback' => fn( $v ) => absint( $v ),
 						],
 					],
 				]
@@ -124,15 +140,21 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 		}
 
 		public function playlist( WP_REST_Request $request ): WP_REST_Response {
-			$page     = $request->get_param( 'page' );
-			$per_page = $request->get_param( 'per_page' );
-			$search   = $request->get_param( 'search' );
+			$artist_id  = $request->get_param( 'artist_id' );
+			$channle_id = $request->get_param( 'channel_id' );
+			$page       = $request->get_param( 'page' );
+			$per_page   = $request->get_param( 'per_page' );
+			$search     = $request->get_param( 'search' );
+			$track_id   = $request->get_param( 'track_id' );
 
 			$result = rapl()->playlist->query(
 				[
-					'page'     => $page,
-					'per_page' => $per_page,
-					'search'   => $search,
+					'artist_id'  => $artist_id,
+					'channel_id' => $channle_id,
+					'page'       => $page,
+					'per_page'   => $per_page,
+					'search'     => $search,
+					'track_id'   => $track_id,
 				]
 			);
 

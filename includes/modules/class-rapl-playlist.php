@@ -181,11 +181,12 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 			global $wpdb;
 
 			$defaults = [
-				'artist_id' => 0,
-				'page'      => 1,
-				'per_page'  => 10,
-				'search'    => '',
-				'track_id'  => 0,
+				'artist_id'  => 0,
+				'channel_id' => 0,
+				'page'       => 1,
+				'per_page'   => 10,
+				'search'     => '',
+				'track_id'   => 0,
 			];
 
 			$args     = wp_parse_args( $args, $defaults );
@@ -220,6 +221,10 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 
 			if ( $args['artist_id'] ) {
 				$where .= $wpdb->prepare( " AND a.id=%d", $args['artist_id'] );
+			}
+
+			if ( $args['channel_id'] ) {
+				$where .= $wpdb->prepare( " AND h.channel_id=%d", $args['channel_id'] );
 			}
 
 			if ( $args['track_id'] ) {
