@@ -171,6 +171,13 @@ if ( ! class_exists( 'RAPL_Playlist' ) ) {
 		}
 
 		/**
+		 * 헤비 메탈 채널 ID 리턴.
+		 */
+		public function get_channel_heavy_metal(): int {
+			return 149;
+		}
+
+		/**
 		 * 데이터베이스에 저장된 트랙 정보를 쿼리.
 		 *
 		 * @param array $args

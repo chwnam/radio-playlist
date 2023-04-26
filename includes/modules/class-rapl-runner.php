@@ -31,6 +31,7 @@ if ( ! class_exists( 'RAPL_Runner' ) ) {
 			$channels = [
 				$module->get_channel_thrash_metal(),
 				$module->get_channel_power_metal(),
+				$module->get_channel_heavy_metal(),
 			];
 
 			foreach ( $channels as $channel ) {
