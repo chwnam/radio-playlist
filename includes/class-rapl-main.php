@@ -12,11 +12,12 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 	 * Class RAPL_Main
 	 *
 	 * @property-read RAPL_Admin              $admin
-	 * @property-read RAPL_Playlist           $playlist
+	 * @property-read RAPL_Collectors         $collectors
+	 * @property-read RAPL_Fetchers           $fetchers
 	 * @property-read RAPL_Registers          $registers
 	 * @property-read RAPL_REST_Routes        $rest_routes
 	 * @property-read RAPL_Runner             $runner
-	 * @property-read RAPL_Shortcode_Handlers $shortcode_handlers
+	 * @property-read RAPL_Stores             $stores
 	 * @property-read RAPL_YouTube            $youtube
 	 */
 	class RAPL_Main extends RAPL_Main_Base {
@@ -29,11 +30,12 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 		protected function get_early_modules(): array {
 			return [
 				'admin'              => RAPL_Admin::class,
-				'playlist'           => fn() => $this->new_instance( RAPL_Playlist::class ),
+				'collectors'         => fn() => $this->new_instance( RAPL_Collectors::class ),
+				'fetchers'           => fn() => $this->new_instance( RAPL_Fetchers::class ),
 				'registers'          => RAPL_Registers::class,
 				'rest_routes'        => RAPL_REST_Routes::class,
 				'runner'             => RAPL_Runner::class,
-				'shortcode_handlers' => fn() => $this->new_instance( RAPL_Shortcode_Handlers:: class ),
+				'stores'             => fn() => $this->new_instance( RAPL_Stores::class ),
 				'youtube'            => fn() => $this->new_instance( RAPL_YouTube::class ),
 			];
 		}
@@ -74,9 +76,16 @@ if ( ! class_exists( 'RAPL_Main' ) ) {
 
 			// phpcs:enable Squiz.PHP.CommentedOutCode, Squiz.Commenting.InlineComment.InvalidEndChar
 
+			/**
+			 * CORS Headers 응답 헤더 추가.
+			 */
 			$this->add_filter( 'rest_exposed_cors_headers', function ( array $expose_headers ) {
-				$expose_headers[] = 'X-Rapl-TimeSpent';
-				return $expose_headers;
+				return [
+					...$expose_headers,
+					'X-RAPL-TimeSpent',
+					'X-RAPL-Total',
+					'X-RAPL-TotalPages',
+				];
 			} );
 		}
 

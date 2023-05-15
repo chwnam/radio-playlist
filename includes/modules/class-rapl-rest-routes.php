@@ -33,7 +33,8 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 					'permission_callback' => '__return_true',
 					'args'                => [
 						'artist_id'  => [
-							'required'          => true,
+							'required'          => false,
+							'default'           => 0,
 							'description'       => '아티스트 ID',
 							'sanitize_callback' => fn( $v ) => absint( $v ),
 						],
@@ -62,7 +63,8 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 							'sanitize_callback' => 'sanitize_text_field',
 						],
 						'track_id'   => [
-							'required'          => true,
+							'required'          => false,
+							'default'           => 0,
 							'description'       => '트랙 ID',
 							'sanitize_callback' => fn( $v ) => absint( $v ),
 						],
@@ -73,7 +75,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			/**
 			 * 한 아티스트의 재생 이력
 			 *
-			 * uses RAPL_REST_Routes::artist()
+			 * @uses RAPL_REST_Routes::artist()
 			 */
 			yield new RAPL_Reg_REST_Route(
 				self::NAMESPACE,
@@ -107,7 +109,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			/**
 			 * 한 노래의 재생 이력
 			 *
-			 * uses RAPL_REST_Routes::track()
+			 * @uses RAPL_REST_Routes::track()
 			 */
 			yield new RAPL_Reg_REST_Route(
 				self::NAMESPACE,
@@ -147,7 +149,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			$search     = $request->get_param( 'search' );
 			$track_id   = $request->get_param( 'track_id' );
 
-			$result = rapl()->playlist->query(
+			$result = rapl()->stores->history->query(
 				[
 					'artist_id'  => $artist_id,
 					'channel_id' => $channle_id,
@@ -159,56 +161,102 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			);
 
 			$headers = [
-				'X-WP-Total'       => $result->total,
-				'X-WP-TotalPages'  => $result->total_pages,
-				'X-Rapl-TimeSpent' => $result->time_spent,
+				'X-RAPL-Total'      => $result->total,
+				'X-RAPL-TotalPages' => $result->total_pages,
+				'X-RAPL-TimeSpent'  => $result->time_spent,
 			];
 
 			return new WP_REST_Response( $result->items, 200, $headers );
 		}
 
 		public function artist( WP_REST_Request $request ): WP_REST_Response {
+			// Modules.
+			$artist_store = rapl()->stores->artist;
+
+			// Params
 			$artist_id = $request->get_param( 'artist_id' );
 			$page      = $request->get_param( 'page' );
 			$per_page  = $request->get_param( 'per_page' );
 
-			$result = rapl()->playlist->query(
-				[
-					'artist_id' => $artist_id,
-					'page'      => $page,
-					'per_page'  => $per_page,
-				]
-			);
+			// Queries
+			$artist = $artist_store->get( $artist_id );
+			if ( ! $artist ) {
+				return new WP_REST_Response( null, 404 );
+			}
 
-			$headers = [
-				'X-WP-Total'       => $result->total,
-				'X-WP-TotalPages'  => $result->total_pages,
-				'X-Rapl-TimeSpent' => $result->time_spent,
+			$total_tracks  = $artist_store->total_tracks( $artist_id );
+			$first_fetched = $artist_store->first_fetch( $artist_id );
+			$last_fetched  = $artist_store->last_fetch( $artist_id );
+			$tracks        = $artist_store->playback_counts( "artist_id=$artist_id&page=$page&per_page=$per_page" );
+
+			// Response organizing.
+			$result = [
+				'artist'        => $artist,
+				'total_tracks'  => $total_tracks,
+				'first_fetched' => $first_fetched,
+				'last_fethed'   => $last_fetched,
+				'tracks'        => $tracks->items,
 			];
 
-			return new WP_REST_Response( $result->items, 200, $headers );
+			// Headers organizing.
+			$headers = [
+				'X-RAPL-Total'      => $tracks->total,
+				'X-RAPL-TotalPages' => $tracks->total_pages,
+				'X-RAPL-TimeSpent'  => $tracks->time_spent,
+			];
+
+			return new WP_REST_Response( $result, 200, $headers );
 		}
 
 		public function track( WP_REST_Request $request ): WP_REST_Response {
+			// Modules.
+			$track_store   = rapl()->stores->track;
+			$history_store = rapl()->stores->history;
+			$youtube       = rapl()->youtube;
+
+			// Params.
 			$track_id = $request->get_param( 'track_id' );
 			$page     = $request->get_param( 'page' );
 			$per_page = $request->get_param( 'per_page' );
 
-			$result = rapl()->playlist->query(
-				[
-					'track_id' => $track_id,
-					'page'     => $page,
-					'per_page' => $per_page,
-				]
-			);
+			// Queries.
+			$track = $track_store->get( $track_id );
+			if ( ! $track ) {
+				return new WP_REST_Response( null, 404 );
+			}
 
-			$headers = [
-				'X-WP-Total'       => $result->total,
-				'X-WP-TotalPages'  => $result->total_pages,
-				'X-Rapl-TimeSpent' => $result->time_spent,
+			$first_fetched = $track_store->first_fetch( $track_id );
+			$last_fetched  = $track_store->last_fetch( $track_id );
+			$history       = $history_store->query( "track_id=$track_id&page=$page&per_page=$per_page" );
+
+			// Response organizing.
+			$result = [
+				'track'         => $track,
+				'first_fetched' => $first_fetched,
+				'last_fethed'   => $last_fetched,
+				'youtube'       => [
+					'video' => RAPL_YouTube::get_direct_url( $track_id, 'video' ),
+					'music' => RAPL_YouTube::get_direct_url( $track_id, 'music' ),
+				],
+				'history'       => array_map(
+					function ( RAPL_Object_History $item ) {
+						return [
+							'history_id' => $item->history_id,
+							'started'    => $item->started,
+						];
+					},
+					$history->items
+				),
 			];
 
-			return new WP_REST_Response( $result->items, 200, $headers );
+			// Headers organizing.
+			$headers = [
+				'X-RAPL-Total'      => $history->total,
+				'X-RAPL-TotalPages' => $history->total_pages,
+				'X-RAPL-TimeSpent'  => $history->time_spent,
+			];
+
+			return new WP_REST_Response( $result, 200, $headers );
 		}
 	}
 }

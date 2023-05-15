@@ -16,6 +16,7 @@ if ( ! class_exists( 'RAPL_Admin_Playlist' ) ) {
 		 * @see RAPL_Register_Menu::get_items()
 		 */
 		public function output_menu_page(): void {
+			do_action( 'rapl_playlist' );
 		}
 	}
 }

@@ -23,36 +23,7 @@ if ( ! class_exists( 'RAPL_Runner' ) ) {
 		 * @return void
 		 */
 		public function rapl_playlist(): void {
-			$logger = rapl_get_logger();
-			$logger->info( 'Starting \'rapl_playlist\' schedule.' );
-
-			$module = rapl()->playlist;
-
-			$channels = [
-				$module->get_channel_thrash_metal(),
-				$module->get_channel_power_metal(),
-				$module->get_channel_heavy_metal(),
-			];
-
-			foreach ( $channels as $channel ) {
-				$items = $module->fetch( $channel );
-
-				if ( $this->is_debug() ) {
-					$module->dump( $items, '', (string) $channel );
-				}
-
-				$module->collect( $channel, $items );
-				sleep( 2 );
-			}
-		}
-
-		/**
-		 * wp-config.php WP_ENVIRONMENT_TYPE 상수를 'local', 'development' 값으로 잡으면 디버깅을 위한 객체 덤프.
-		 *
-		 * @return bool
-		 */
-		protected function is_debug(): bool {
-			return in_array( wp_get_environment_type(), [ 'local', 'development' ], true );
+			rapl()->collectors->rock_radio->collect();
 		}
 	}
 }

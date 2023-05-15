@@ -1,8 +1,8 @@
 <?php
 /**
- * @var int                     $page
- * @var string                  $search
- * @var RAPL_Object_Track_Query $result
+ * @var int                       $page
+ * @var string                    $search
+ * @var RAPL_Object_Query_Results $result
  */
 ?>
 <div>
