@@ -127,6 +127,20 @@ if ( ! class_exists( 'RAPL_Store_Artist' ) ) {
 			);
 		}
 
+		public function total_playbacks( int $artist_id ) : int {
+			global $wpdb;
+
+			return (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM {$wpdb->prefix}rapl_artists AS a" .
+					" INNER JOIN {$wpdb->prefix}rapl_tracks AS t ON t.artist_id=a.id" .
+					" INNER JOIN {$wpdb->prefix}rapl_history AS h ON h.track_id=t.id" .
+					" WHERE a.id=%d",
+					$artist_id
+				)
+			);
+		}
+
 		public function first_fetch( int $artist_id ): int {
 			return (int) $this->aggregate_query( $artist_id, 'MIN' );
 

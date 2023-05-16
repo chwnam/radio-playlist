@@ -184,18 +184,20 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 				return new WP_REST_Response( null, 404 );
 			}
 
-			$total_tracks  = $artist_store->total_tracks( $artist_id );
-			$first_fetched = $artist_store->first_fetch( $artist_id );
-			$last_fetched  = $artist_store->last_fetch( $artist_id );
-			$tracks        = $artist_store->playback_counts( "artist_id=$artist_id&page=$page&per_page=$per_page" );
+			$total_tracks   = $artist_store->total_tracks( $artist_id );
+			$total_playback = $artist_store->total_playbacks( $artist_id );
+			$first_fetched  = $artist_store->first_fetch( $artist_id );
+			$last_fetched   = $artist_store->last_fetch( $artist_id );
+			$tracks         = $artist_store->playback_counts( "artist_id=$artist_id&page=$page&per_page=$per_page" );
 
 			// Response organizing.
 			$result = [
-				'artist'        => $artist,
-				'total_tracks'  => $total_tracks,
-				'first_fetched' => $first_fetched,
-				'last_fethed'   => $last_fetched,
-				'tracks'        => $tracks->items,
+				'artist'         => $artist,
+				'total_tracks'   => $total_tracks,
+				'total_playback' => $total_playback,
+				'first_fetched'  => $first_fetched,
+				'last_fethed'    => $last_fetched,
+				'tracks'         => $tracks->items,
 			];
 
 			// Headers organizing.
