@@ -258,4 +258,5 @@ return array(
     'RAPL_Template_Impl' => $baseDir . '/core/traits/trait-rapl-template-impl.php',
     'RAPL_Theme_Hierarchy' => $baseDir . '/core/etc/class-rapl-theme-hierarchy.php',
     'RAPL_YouTube' => $baseDir . '/includes/modules/class-rapl-youtube-video.php',
+    'RAPL_YouTube_Prop_Trait' => $baseDir . '/includes/traits/trait-rapl-youtube-prop-trait.php',
 );

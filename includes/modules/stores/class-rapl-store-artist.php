@@ -95,7 +95,15 @@ if ( ! class_exists( 'RAPL_Store_Artist' ) ) {
 			$results    = $wpdb->get_results( $query );
 			$time       = $wpdb->timer_stop();
 			$found_rows = (int) $wpdb->get_var( "SELECT FOUND_ROWS()" );
-			$records    = array_map( [ RAPL_Object_Playback_Count::class, 'from_object' ], $results );
+			$records    = array_map( [ RAPL_Object_Playback_Count::class, 'import' ], $results );
+
+			if ( $artist_id ) {
+				$artist = rapl()->stores->artist->get( $artist_id );
+				foreach ( $records as $record ) {
+					/** @var RAPL_Object_Playback_Count $record */
+					$record->set_youtube( $record->track_id, $artist->artist_name, $record->title );
+				}
+			}
 
 			return RAPL_Object_Query_Results::create(
 				items: $records,

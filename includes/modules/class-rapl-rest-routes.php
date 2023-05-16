@@ -235,12 +235,20 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 				'first_fetched' => $first_fetched,
 				'last_fethed'   => $last_fetched,
 				'youtube'       => [
-					'video' => RAPL_YouTube::get_direct_url( $track_id, 'video' ),
-					'music' => RAPL_YouTube::get_direct_url( $track_id, 'music' ),
+					'music' => [
+						'direct' => RAPL_YouTube::get_direct_url( $track_id, 'music' ),
+						'search' => RAPL_YouTube::get_search_query_url( $track->artist_name, $track->title, 'music' ),
+					],
+					'video' => [
+						'direct' => RAPL_YouTube::get_direct_url( $track_id, 'video' ),
+						'search' => RAPL_YouTube::get_search_query_url( $track->artist_name, $track->title, 'video' ),
+					],
 				],
 				'history'       => array_map(
 					function ( RAPL_Object_History $item ) {
 						return [
+							'network_id' => $item->network_id,
+							'channel_id' => $item->channel_id,
 							'history_id' => $item->history_id,
 							'started'    => $item->started,
 						];

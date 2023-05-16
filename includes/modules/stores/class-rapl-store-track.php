@@ -67,12 +67,12 @@ if ( ! class_exists( 'RAPL_Store_Track' ) ) {
 			return $this->get( $wpdb->insert_id );
 		}
 
-		public function first_fetch( int $track_id ): string {
-			return $this->aggrigate_query( $track_id, 'MIN' );
+		public function first_fetch( int $track_id ): int {
+			return (int) $this->aggrigate_query( $track_id, 'MIN' );
 		}
 
-		public function last_fetch( int $track_id ): string {
-			return $this->aggrigate_query( $track_id, 'MAX' );
+		public function last_fetch( int $track_id ): int {
+			return (int) $this->aggrigate_query( $track_id, 'MAX' );
 		}
 
 		private function aggrigate_query( int $track_id, string $func ): string {
