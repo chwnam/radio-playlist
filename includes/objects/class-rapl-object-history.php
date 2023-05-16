@@ -35,7 +35,7 @@ if ( ! class_exists( 'RAPL_Object_History' ) ) {
 		public static function import( array|object $item ): static {
 			$instance = RAPL_Import_Helper::import( $item, static::class );
 
-			return $instance->set_youtube( $instance, $instance->track_id, $instance->artist_name, $instance->title );
+			return $instance->set_youtube( $instance->track_id, $instance->artist_name, $instance->title );
 		}
 
 		public function __construct() {
