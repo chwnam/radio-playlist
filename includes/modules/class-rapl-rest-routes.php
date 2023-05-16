@@ -196,7 +196,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 				'total_tracks'   => $total_tracks,
 				'total_playback' => $total_playback,
 				'first_fetched'  => $first_fetched,
-				'last_fethed'    => $last_fetched,
+				'last_fetched'   => $last_fetched,
 				'tracks'         => $tracks->items,
 			];
 
