@@ -205,3 +205,15 @@ if ( ! function_exists( 'rapl_get_logger' ) ) {
 		return $logger;
 	}
 }
+
+
+if ( ! function_exists( 'rapl_update_count' ) ) {
+	/**
+	 * Update artists, and tracks count fields correctly.
+	 *
+	 * @return void
+	 */
+	function rapl_update_count(): void {
+		rapl()->registers->custom_table->update_counts();
+	}
+}

@@ -39,7 +39,7 @@ if ( ! class_exists( 'RAPL_Store_History' ) ) {
 			);
 		}
 
-		public function insert( array $data ): RAPL_Object_History {
+		public function insert( array $data ): int {
 			global $wpdb;
 
 			$wpdb->insert(
@@ -58,7 +58,7 @@ if ( ! class_exists( 'RAPL_Store_History' ) ) {
 				]
 			);
 
-			return $this->get( $wpdb->insert_id );
+			return $wpdb->insert_id;
 		}
 
 		/**
@@ -141,9 +141,11 @@ if ( ! class_exists( 'RAPL_Store_History' ) ) {
 					"t.title",
 					"a.id AS artist_id",
 					"a.name AS artist_name",
+					"a.count AS artist_count",
 					"t.length",
 					"h.started",
 					"t.art_url",
+					"t.count AS track_count",
 				]
 			);
 		}

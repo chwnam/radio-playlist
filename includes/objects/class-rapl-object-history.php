@@ -22,9 +22,13 @@ if ( ! class_exists( 'RAPL_Object_History' ) ) {
 
 		public string $title = '';
 
+		public int $track_count = 0;
+
 		public int $artist_id = 0;
 
 		public string $artist_name = '';
+
+		public int $artist_count = 0;
 
 		public int $length = 0;
 

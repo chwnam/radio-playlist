@@ -45,23 +45,25 @@ if ( ! class_exists( 'RAPL_Collector_Rock_Radio' ) ) {
 
 			$artist_id = $artist_store->find( $track_info->artist_id );
 			if ( ! $artist_id ) {
-				$artist_store->insert(
+				$artist_id = $artist_store->insert(
 					[
-						'id'   => $track_info->artist_id,
-						'name' => $track_history->artist,
+						'id'    => $track_info->artist_id,
+						'name'  => $track_history->artist,
+						'count' => 0,
 					]
 				);
 			}
 
 			$track_id = $track_store->find( $track_history->track_id );
 			if ( ! $track_id ) {
-				$track_store->insert(
+				$track_id = $track_store->insert(
 					[
 						'id'        => $track_history->track_id,
 						'artist_id' => $track_info->artist_id,
 						'title'     => $track_history->title,
 						'length'    => $track_history->length,
 						'art_url'   => $track_history->art_url,
+						'count'     => 0,
 					]
 				);
 			}
@@ -76,6 +78,9 @@ if ( ! class_exists( 'RAPL_Collector_Rock_Radio' ) ) {
 						'started'    => $track_history->started,
 					]
 				);
+				// Increment artist and track count.
+				$artist_store->add_count( $artist_id );
+				$track_store->add_count( $track_id );
 			}
 		}
 	}

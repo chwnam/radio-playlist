@@ -12,7 +12,7 @@ if ( ! class_exists( 'RAPL_Register_Custom_Table' ) ) {
 	class RAPL_Register_Custom_Table extends RAPL_Register_Base_Custom_Table {
 		use RAPL_Hook_Impl;
 
-		const DB_VERSION = '20230312v1'; // Set DB version here.
+		const DB_VERSION = '20230519v1'; // Set DB version here.
 
 		/**
 		 * Constructor
@@ -41,11 +41,13 @@ if ( ! class_exists( 'RAPL_Register_Custom_Table' ) ) {
 				[
 					"id bigint(20) unsigned NOT NULL AUTO_INCREMENT",
 					"name varchar(100) NOT NULL",
+					"count bigint(20) unsigned NOT NULL",
 				],
 				[
 					"PRIMARY KEY  (id)",
 					"UNIQUE KEY unique_name (name)",
 					"FULLTEXT INDEX idx_name (name)",
+					"KEY idx_count (count)",
 				]
 			);
 
@@ -57,11 +59,13 @@ if ( ! class_exists( 'RAPL_Register_Custom_Table' ) ) {
 					"title varchar(255) NOT NULL",
 					"length int unsigned NOT NULL",
 					"art_url varchar(255) NOT NULL",
+					"count bigint(20) unsigned NOT NULL",
 				],
 				[
 					"PRIMARY KEY  (id)",
 					"KEY idx_artist_id (artist_id)",
 					"FULLTEXT INDEX idx_title (title)",
+					"KEY idx_count (count)",
 				]
 			);
 
@@ -104,6 +108,31 @@ if ( ! class_exists( 'RAPL_Register_Custom_Table' ) ) {
 //					]
 //				],
 			];
+		}
+
+		/**
+		 * Update count fields.
+		 */
+		public function update_counts(): void {
+			global $wpdb;
+
+			$query_for_artists =
+				"UPDATE {$wpdb->prefix}rapl_artists AS a, (" .
+				"SELECT a.id, COUNT(a.id) AS playback_count FROM {$wpdb->prefix}rapl_artists AS a" .
+				" INNER JOIN {$wpdb->prefix}rapl_tracks AS t ON t.artist_id=a.id" .
+				" INNER JOIN {$wpdb->prefix}rapl_history h on h.track_id = t.id" .
+				" GROUP BY a.id) AS c" .
+				" SET a.count=c.playback_count WHERE a.id=c.id";
+
+			$query_for_tracks =
+				"UPDATE {$wpdb->prefix}rapl_tracks AS t, (" .
+				"SELECT t.id, COUNT(t.id) AS playback_count FROM {$wpdb->prefix}rapl_tracks AS t" .
+				" INNER JOIN {$wpdb->prefix}rapl_history h on h.track_id = t.id" .
+				" GROUP BY t.id) AS c" .
+				" SET t.count=c.playback_count WHERE t.id=c.id";
+
+			$wpdb->query( $query_for_artists );
+			$wpdb->query( $query_for_tracks );
 		}
 	}
 }

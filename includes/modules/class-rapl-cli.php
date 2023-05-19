@@ -36,41 +36,13 @@ if ( ! class_exists( 'RAPL_CLI' ) ) {
 		}
 
 		/**
-		 * Restore from dump files.
-		 *
-		 * ## OPTIONS
-		 *
-		 * <file_name>
-		 * : .json file to load.
-		 *
-		 * @param array $args
+		 * Update count.
 		 *
 		 * @return void
-		 * @throws WP_CLI\ExitException
 		 */
-		public function import( array $args ): void {
-			$path = realpath( $args[0] );
-
-			if ( ! file_exists( $path ) ) {
-				WP_CLI::error( 'File not found.' );
-			}
-
-			if ( ! is_file( $path ) || ! is_readable( $path ) ) {
-				WP_CLI::error( 'File cannot be read.' );
-			}
-
-			$items = json_decode( file_get_contents( $path ) );
-
-			if ( ! $items ) {
-				WP_CLI::error( 'Invalid JSON file.' );
-			}
-
-			$start  = microtime( true );
-			$module = rapl()->playlist;
-			$module->collect( $items );
-			$finish = microtime( true );
-
-			WP_CLI::success( sprintf( "'%s' successfully imported in %.2fs.", $path, ( $finish - $start ) ) );
+		public function update_count(): void {
+			rapl_update_count();
+			WP_CLI::success( "Count updated." );
 		}
 	}
 }

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 	class RAPL_REST_Routes implements RAPL_Module {
 		const NAMESPACE = 'rapl/v1';
-		const MODULE    = 'rest_routes';
+		const MODULE = 'rest_routes';
 
 		/**
 		 * @return Generator
@@ -172,6 +172,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 		public function artist( WP_REST_Request $request ): WP_REST_Response {
 			// Modules.
 			$artist_store = rapl()->stores->artist;
+			$track_store  = rapl()->stores->track;
 
 			// Params
 			$artist_id = $request->get_param( 'artist_id' );
@@ -188,7 +189,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			$total_playback = $artist_store->total_playbacks( $artist_id );
 			$first_fetched  = $artist_store->first_fetch( $artist_id );
 			$last_fetched   = $artist_store->last_fetch( $artist_id );
-			$tracks         = $artist_store->playback_counts( "artist_id=$artist_id&page=$page&per_page=$per_page" );
+			$tracks         = $track_store->query( "artist_id=$artist_id&page=$page&per_page=$per_page" );
 
 			// Response organizing.
 			$result = [
@@ -214,7 +215,6 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			// Modules.
 			$track_store   = rapl()->stores->track;
 			$history_store = rapl()->stores->history;
-			$youtube       = rapl()->youtube;
 
 			// Params.
 			$track_id = $request->get_param( 'track_id' );
@@ -236,16 +236,6 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 				'track'         => $track,
 				'first_fetched' => $first_fetched,
 				'last_fethed'   => $last_fetched,
-				'youtube'       => [
-					'music' => [
-						'direct' => RAPL_YouTube::get_direct_url( $track_id, 'music' ),
-						'search' => RAPL_YouTube::get_search_query_url( $track->artist_name, $track->title, 'music' ),
-					],
-					'video' => [
-						'direct' => RAPL_YouTube::get_direct_url( $track_id, 'video' ),
-						'search' => RAPL_YouTube::get_search_query_url( $track->artist_name, $track->title, 'video' ),
-					],
-				],
 				'history'       => array_map(
 					function ( RAPL_Object_History $item ) {
 						return [
