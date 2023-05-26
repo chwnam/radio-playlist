@@ -18,6 +18,8 @@ if ( ! class_exists( 'RAPL_Object_Track' ) ) {
 
 		public int $artist_id = 0;
 
+		public string $artist_name = '';
+
 		public string $title = '';
 
 		public int $length = 0;
