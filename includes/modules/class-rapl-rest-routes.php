@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 	class RAPL_REST_Routes implements RAPL_Module {
 		const NAMESPACE = 'rapl/v1';
-		const MODULE = 'rest_routes';
+		const MODULE    = 'rest_routes';
 
 		/**
 		 * @return Generator
@@ -102,6 +102,12 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 							'default'           => 10,
 							'sanitize_callback' => fn( $v ) => min( 100, max( 1, absint( $v ) ) ),
 						],
+						'orderby'   => [
+							'required'          => false,
+							'description'       => '정렬 방식',
+							'default'           => 'title:asc',
+							'sanitize_callback' => fn( $v ) => sanitize_text_field( $v ),
+						],
 					],
 				]
 			);
@@ -178,6 +184,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			$artist_id = $request->get_param( 'artist_id' );
 			$page      = $request->get_param( 'page' );
 			$per_page  = $request->get_param( 'per_page' );
+			$orderby   = $request->get_param( 'orderby' );
 
 			// Queries
 			$artist = $artist_store->get( $artist_id );
@@ -189,7 +196,7 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			$total_playback = $artist_store->total_playbacks( $artist_id );
 			$first_fetched  = $artist_store->first_fetch( $artist_id );
 			$last_fetched   = $artist_store->last_fetch( $artist_id );
-			$tracks         = $track_store->query( "artist_id=$artist_id&page=$page&per_page=$per_page" );
+			$tracks         = $track_store->query( "artist_id=$artist_id&page=$page&per_page=$per_page&orderby=$orderby" );
 
 			// Response organizing.
 			$result = [

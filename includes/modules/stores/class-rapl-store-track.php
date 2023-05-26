@@ -80,13 +80,14 @@ if ( ! class_exists( 'RAPL_Store_Track' ) ) {
 			return $wpdb->insert_id;
 		}
 
-		public function query( array|string $args = [] ) {
+		public function query( array|string $args = [] ): RAPL_Object_Query_Results {
 			global $wpdb;
 
 			$defaults = [
 				'artist_id' => 0,
 				'page'      => 1,
 				'per_page'  => 10,
+				'orderby'   => 'title:asc',
 			];
 
 			$args      = wp_parse_args( $args, $defaults );
@@ -106,15 +107,21 @@ if ( ! class_exists( 'RAPL_Store_Track' ) ) {
 			$f      = implode( ', ', $fields );
 			$offset = ( $page - 1 ) * $per_page;
 			$limit  = $wpdb->prepare( "LIMIT %d, %d", $offset, $per_page );
+			$order  = self::parse_orderby( $args['orderby'] );
 
 			$where = 'WHERE 1=1';
 			if ( $artist_id ) {
 				$where .= $wpdb->prepare( ' AND t.artist_id=%d', $artist_id );
 			}
 
+			$orderby = match ( $order[0] ) {
+				           'title'          => 't.title',
+				           'playback_count' => 't.count',
+			           } . " $order[1]";
+
 			$query = $wpdb->prepare(
 				"SELECT SQL_CALC_FOUND_ROWS $f FROM {$wpdb->prefix}rapl_tracks AS t" .
-				" $where ORDER BY t.title $limit",
+				" $where ORDER BY $orderby $limit",
 				$artist_id
 			);
 
@@ -159,6 +166,26 @@ if ( ! class_exists( 'RAPL_Store_Track' ) ) {
 			);
 
 			$wpdb->query( $query );
+		}
+
+		private static function parse_orderby( string $orderby ): array {
+			$exploded = explode( ':', sanitize_text_field( $orderby ), 2 );
+
+			if ( 0 === count( $exploded ) ) {
+				return [ 'title', 'asc' ];
+			} elseif ( 1 === count( $exploded ) ) {
+				$order = 'asc';
+			} else {
+				$order = 'desc' === strtolower( $exploded[1] ) ? 'desc' : 'asc';
+			}
+
+			$field = strtolower( $exploded[0] );
+
+			if ( ! in_array( $field, [ 'title', 'playback_count' ] ) ) {
+				$field = 'title';
+			}
+
+			return [ $field, $order ];
 		}
 
 		private function aggrigate_query( int $track_id, string $func ): string {
