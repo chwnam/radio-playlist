@@ -145,6 +145,53 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 					],
 				]
 			);
+
+			/**
+			 * 랭킹 산출
+			 *
+			 * @uses RAPL_REST_Routes::ranking()
+			 */
+			yield new RAPL_Reg_REST_Route(
+				self::NAMESPACE,
+				'ranking/?',
+				[
+					'method'              => 'GET',
+					'callback'            => "$module@ranking",
+					'permission_callback' => '__return_true',
+					'args'                => [
+						'criteria' => [
+							'default'           => 'artist',
+							'description'       => '랭킹 분야. artist (default), track, or shuffle.',
+							'required'          => false,
+							'sanitize_callback' => [ RAPL_Store_Ranking::class, 'sanitize_criteria' ],
+						],
+						'duration' => [
+							'default'           => '1w',
+							'description'       => '조회기간. 1w, 2w, 3w, 1m, 2m, 3m.',
+							'required'          => false,
+							'sanitize_callback' =>  [ RAPL_Store_Ranking::class, 'sanitize_duration' ],
+						],
+						'exclude' => [
+							'default'           => 'yes',
+							'description'       => '아티스트 제외 적용 여부.',
+							'required'          => false,
+							'sanitize_callback' =>  [ RAPL_Store_Ranking::class, 'sanitize_exclude' ],
+						],
+						'number'   => [
+							'default'           => 10,
+							'description'       => '조회 개수.',
+							'required'          => false,
+							'sanitize_callback' => [ RAPL_Store_Ranking::class, 'sanitize_number' ],
+						],
+						'order'    => [
+							'default'           => 'desc',
+							'description'       => '랭킹 순서, asc: 오름차순, desc 내림차순.',
+							'required'          => false,
+							'sanitize_callback' => [ RAPL_Store_Ranking::class, 'sanitize_order' ],
+						],
+					],
+				]
+			);
 		}
 
 		public function playlist( WP_REST_Request $request ): WP_REST_Response {
@@ -264,6 +311,20 @@ if ( ! class_exists( 'RAPL_REST_Routes' ) ) {
 			];
 
 			return new WP_REST_Response( $result, 200, $headers );
+		}
+
+		public function ranking( WP_REST_Request $request ): WP_REST_Response {
+			// Modules.
+			$ranking_store = rapl()->stores->ranking;
+
+			// Extract all params.
+			$criteria = $request->get_param( 'criteria' );
+			$duration = $request->get_param( 'duration' );
+			$exclude  = $request->get_param( 'exclude' );
+			$number   = $request->get_param( 'number' );
+			$order    = $request->get_param( 'order' );
+
+			return new WP_REST_Response( $ranking_store->get_results( $criteria, $duration, $exclude, $number, $order ) );
 		}
 	}
 }
